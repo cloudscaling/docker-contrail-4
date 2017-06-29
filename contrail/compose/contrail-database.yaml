@@ -6,3 +6,9 @@ services:
     volumes:
      - /var/lib/cassandra/data
     network_mode: "host"
+  zookeeper:
+    image: contrail-zookeeper:4.0.0.0-20
+    env_file: contrail-database.env
+    volumes:
+     - /data
+    network_mode: "host"

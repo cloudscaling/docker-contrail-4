@@ -1,0 +1,14 @@
+version: '2'
+services:
+  cassandra:
+    image: contrail-database:4.0.0.0-20
+    env_file: contrail-database.env
+    environment:
+    - CASSANDRA_LISTEN_ADDRESS=10.87.64.32
+    - CASSANDRA_BROADCAST_ADDRESS=10.87.64.32
+    - CASSANDRA_SEEDS=10.87.64.32
+    - CASSANDRA_START_RPC=true
+    - CASSANDRA_CLUSTER_NAME=contrail_database
+    volumes:
+     - /var/lib/cassandra/data
+    network_mode: "host"

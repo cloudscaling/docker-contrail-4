@@ -1,0 +1,6 @@
+version: '2'
+services:
+  kafka:
+    image: contrail-kafka:4.0.0.0-20
+    env_file: ../common.env
+    network_mode: "host"

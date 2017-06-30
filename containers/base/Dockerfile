@@ -7,5 +7,6 @@ RUN yum install -y https://repos.fedorapeople.org/repos/openstack/openstack-newt
 RUN curl -o /usr/bin/confd https://github.com/kelseyhightower/confd/releases/download/v0.11.0/confd-0.11.0-linux-amd64
 RUN chmod +x /usr/bin/confd
 RUN mkdir -p /etc/confd/{conf.d,templates}
+RUN yum install -y iproute
 
 CMD ["/usr/bin/tail","-f","/dev/null"]

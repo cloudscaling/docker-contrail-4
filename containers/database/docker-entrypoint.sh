@@ -1,11 +1,13 @@
 #!/bin/bash
 set -e
 
+default_interface=`ip route show |grep "default via" |awk '{print $5}'`
+default_ip_address=`ip address show dev $default_interface |head -3 |tail -1 |tr "/" " " |awk '{print $2}'`
 : ${CASSANDRA_RPC_ADDRESS='0.0.0.0'}
 
 : ${CASSANDRA_LISTEN_ADDRESS='auto'}
 if [ "$CASSANDRA_LISTEN_ADDRESS" = 'auto' ]; then
-	CASSANDRA_LISTEN_ADDRESS="$(hostname --ip-address)"
+	CASSANDRA_LISTEN_ADDRESS=${default_ip_address}
 fi
 
 : ${CASSANDRA_BROADCAST_ADDRESS="$CASSANDRA_LISTEN_ADDRESS"}

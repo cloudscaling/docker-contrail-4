@@ -2,13 +2,13 @@ version: '2'
 services:
   cassandra:
     image: contrail-database:4.0.0.0-20
-    env_file: contrail-database.env
+    env_file: ../common.env
     volumes:
      - /var/lib/cassandra/data
     network_mode: "host"
   zookeeper:
     image: contrail-zookeeper:4.0.0.0-20
-    env_file: contrail-database.env
+    env_file: ../common.env
     volumes:
      - /data
     network_mode: "host"

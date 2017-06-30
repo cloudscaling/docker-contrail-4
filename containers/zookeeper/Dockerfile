@@ -1,6 +1,6 @@
 FROM centos:7.3.1611
 
-RUN yum install -y java
+RUN yum install -y java iproute
 
 ENV ZOO_USER=zookeeper \
     ZOO_CONF_DIR=/conf \

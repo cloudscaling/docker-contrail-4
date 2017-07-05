@@ -1,5 +1,4 @@
 #!/bin/bash
-set -eu
 
 # usage: file_env VAR [DEFAULT]
 #    ie: file_env 'XYZ_DB_PASSWORD' 'example'
@@ -40,6 +39,7 @@ fi
 : "${RABBITMQ_MANAGEMENT_SSL_CACERTFILE:=$RABBITMQ_SSL_CACERTFILE}"
 : "${RABBITMQ_MANAGEMENT_SSL_CERTFILE:=$RABBITMQ_SSL_CERTFILE}"
 : "${RABBITMQ_MANAGEMENT_SSL_KEYFILE:=$RABBITMQ_SSL_KEYFILE}"
+RABBITMQ_NODENAME=${RABBITMQ_NODENAME:-`hostname`}
 
 # Allowed env vars that will be read from mounted files (i.e. Docker Secrets):
 fileEnvKeys=(
@@ -65,6 +65,7 @@ rabbitConfigKeys=(
 	default_vhost
 	hipe_compile
 	vm_memory_high_watermark
+        nodename
 )
 fileConfigKeys=(
 	management_ssl_cacertfile
@@ -419,13 +420,14 @@ if [ `echo ${!RABBITMQ_SERVERS_*}|wc -w` -gt 1 ]; then
       master_server_hostname=$server_hostname
     fi
   done
-  master_server_ip=${!master_server}
   if [ $master_server_ip != `get_listen_ip` ]; then
+    RABBITMQ_NODENAME=${RABBITMQ_NODENAME:-$server_hostname}
     /usr/lib/rabbitmq/bin/rabbitmq-server -detached
     /usr/lib/rabbitmq/bin/rabbitmqctl stop_app
-    while [ $? -ne 0]; do
-      /usr/lib/rabbitmq/bin/rabbitmqctl join_cluster $server_hostname@$server_ip
-      sleep 5
+    /usr/lib/rabbitmq/bin/rabbitmqctl join_cluster rabbit@$master_server_hostname
+    while [ $? -ne 0 ]; do
+      sleep 3
+      /usr/lib/rabbitmq/bin/rabbitmqctl join_cluster rabbit@$master_server_hostname
     done
     /usr/lib/rabbitmq/bin/rabbitmqctl start_app
     /usr/lib/rabbitmq/bin/rabbitmqctl shutdown

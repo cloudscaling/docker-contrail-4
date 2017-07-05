@@ -12,11 +12,15 @@ services:
     volumes:
      - /data
     network_mode: "host"
-  config-nodemgr:
-    image: contrail-config-nodemgr:4.0.0.0-20
-    env_file: ../common.env
-    network_mode: "host"
   rabbitmq:
     image: contrail-rabbitmq:4.0.0.0-20
     env_file: ../common.env
     network_mode: "host"
+#  redis:
+#    image: contrail-redis:4.0.0.0-20
+#    env_file: ../common.env
+#    network_mode: "host"
+#  config-nodemgr:
+#    image: contrail-config-nodemgr:4.0.0.0-20
+#    env_file: ../common.env
+#    network_mode: "host"

@@ -3,6 +3,8 @@ services:
   network:
     image: docker.io/kubernetes/pause
     network_mode: "host"
+    volumes:
+      - /etc/hosts:/etc/hosts
   cassandra:
     image: contrail-controller-database:4.0.0.0-20
     env_file: ../common.env

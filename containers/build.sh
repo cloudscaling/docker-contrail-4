@@ -8,7 +8,7 @@ if [ -z $1 ]; then
       container_name=contrail${container_name}
       echo ${container_name}
       docker build -t ${container_name}:${version} ${dir}
-      docker save -o /root/images/${container_name}-${version} ${container_name}:${version}
+      docker save -o /var/lib/libvirt/images/docker/images/${container_name}-${version}.tar ${container_name}:${version}
     fi
   done
 else

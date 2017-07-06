@@ -1,4 +1,4 @@
-FROM contrail-config-base:4.0.0.0-20
+FROM contrail-controller-config-base:4.0.0.0-20
 RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done); \
 rm -f /lib/systemd/system/multi-user.target.wants/*;\
 rm -f /etc/systemd/system/*.wants/*;\

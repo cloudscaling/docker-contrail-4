@@ -11,6 +11,7 @@ services:
     network_mode: "service:network"
     depends_on:
       - network
+    restart: on-failure
   zookeeper:
     image: contrail-controller-zookeeper:4.0.0.0-20
     env_file: ../common.env
@@ -19,12 +20,14 @@ services:
     network_mode: "service:network"
     depends_on:
       - network
+    restart: on-failure
   rabbitmq:
     image: contrail-controller-rabbitmq:4.0.0.0-20
     env_file: ../common.env
     network_mode: "service:network"
     depends_on:
       - network
+    restart: on-failure
   redis:
     image: contrail-controller-redis:4.0.0.0-20
     env_file: ../common.env
@@ -32,15 +35,18 @@ services:
     network_mode: "host"
     depends_on:
       - network
+    restart: on-failure
   config-nodemgr:
     image: contrail-controller-config-nodemgr:4.0.0.0-20
     env_file: ../common.env
     network_mode: "service:network"
     depends_on:
       - network
+    restart: on-failure
   config-api:
     image: contrail-controller-config-api:4.0.0.0-20
     env_file: ../common.env
     network_mode: "service:network"
     depends_on:
       - network
+    restart: on-failure

@@ -9,6 +9,7 @@ RUN yum install -y http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-
 RUN yum install -y erlang
 RUN yum install -y https://github.com/rabbitmq/rabbitmq-server/releases/download/rabbitmq_v3_6_10/rabbitmq-server-3.6.10-1.el7.noarch.rpm
 RUN yum install -y iproute
+RUN yum install -y bind-utils
 
 ENV PATH /usr/lib/rabbitmq/bin:$PATH
 ENV HOME /var/lib/rabbitmq

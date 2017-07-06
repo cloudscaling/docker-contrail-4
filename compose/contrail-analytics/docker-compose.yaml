@@ -1,6 +1,11 @@
 version: '2'
 services:
-  kafka:
-    image: contrail-kafka:4.0.0.0-20
-    env_file: ../common.env
+  network:
+    image: docker.io/kubernetes/pause
     network_mode: "host"
+  kafka:
+    image: contrail-analyticsdb-kafka:4.0.0.0-20
+    env_file: ../common.env
+    network_mode: "service:network"
+    depends_on:
+      - network

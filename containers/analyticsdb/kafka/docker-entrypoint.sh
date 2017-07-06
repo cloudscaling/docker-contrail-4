@@ -9,13 +9,20 @@ if [ "$KAFKA_LISTEN_ADDRESS" = 'auto' ]; then
         KAFKA_LISTEN_ADDRESS=${default_ip_address}
 fi
 CONFIG="$KAFKA_CONF_DIR/server.properties"
+CONTROLLER_NODES=${CONTROLLER_NODES:-`hostname`}
+ZOOKEEPER_NODES=${ZOOKEEPER_NODES:-${CONTROLLER_NODES}}
 zk_server_list=''
-IFS=' ' read -ra server_list <<< "${!ZOO_SERVERS_*}"
+server_index=1
+IFS=' ' read -ra server_list <<< "${ZOOKEEPER_NODES}"
 for server in "${server_list[@]}"; do
-  server_address=`echo ${!server}`
-  zk_server_list+=$server_address:2181,
+  zk_server_list+=${server}:2181,
+  if [ `get_listen_ip` == $server ]; then
+    my_index=$server_index
+  fi
+  server_index=$((server_index+1))
 done
 zk_list="${zk_server_list::-1}"
+KAFKA_BROKER_ID=${my_index:-1}
 sed -i "s/^zookeeper.connect=.*$/zookeeper.connect=$zk_list/g" ${CONFIG}
 sed -i "s/^broker.id=.*$/broker.id=$KAFKA_BROKER_ID/g" ${CONFIG}
 sed -i "s/^#advertised.host.name=.*$/advertised.host.name=$KAFKA_LISTEN_ADDRESS/g" ${CONFIG}

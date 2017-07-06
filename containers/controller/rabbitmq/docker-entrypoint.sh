@@ -408,30 +408,27 @@ function get_listen_ip(){
                     head -3 |tail -1 |tr "/" " " |awk '{print $2}'`
   echo ${default_ip_address}
 }
-if [ `echo ${!RABBITMQ_SERVERS_*}|wc -w` -gt 1 ]; then
-  IFS=' ' read -ra server_list <<< "${!RABBITMQ_SERVERS_*}"
-  for server in "${server_list[@]}"; do
-    server_index=`echo $server |cut -d_ -f4`
-    server_hostname=`echo $server |cut -d_ -f3`
-    server_ip=`echo ${!server}`
-    echo $server_ip $server_hostname >> /etc/hosts
-    if [ $server_index -eq 1 ]; then
-      master_server_ip=$server_ip
-      master_server_hostname=$server_hostname
-    fi
-  done
-  if [ $master_server_ip != `get_listen_ip` ]; then
-    RABBITMQ_NODENAME=${RABBITMQ_NODENAME:-$server_hostname}
-    /usr/lib/rabbitmq/bin/rabbitmq-server -detached
-    /usr/lib/rabbitmq/bin/rabbitmqctl stop_app
+CONTROLLER_NODES=${CONTROLLER_NODES:-`hostname`}
+RABBITMQ_NODES=${RABBITMQ_NODES:-${CONTROLLER_NODES}}
+IFS=',' read -ra server_list <<< "${RABBITMQ_NODES}"
+master_server_ip=${server_list[0]}
+host -4 $master_server_ip
+if [ $? -eq 0 ]; then
+  master_server_hostname=`host -4 $master_server_ip |cut -d" " -f5`
+  master_server_hostname=${master_server_hostname::-1}
+else
+  master_server_hostname=`getent hosts $master_server_ip |awk '{print $2}'`
+fi
+if [ $master_server_ip != `get_listen_ip` ]; then
+  /usr/lib/rabbitmq/bin/rabbitmq-server -detached
+  /usr/lib/rabbitmq/bin/rabbitmqctl stop_app
+  /usr/lib/rabbitmq/bin/rabbitmqctl join_cluster rabbit@$master_server_hostname
+  while [ $? -ne 0 ]; do
+    sleep 3
     /usr/lib/rabbitmq/bin/rabbitmqctl join_cluster rabbit@$master_server_hostname
-    while [ $? -ne 0 ]; do
-      sleep 3
-      /usr/lib/rabbitmq/bin/rabbitmqctl join_cluster rabbit@$master_server_hostname
-    done
-    /usr/lib/rabbitmq/bin/rabbitmqctl start_app
-    /usr/lib/rabbitmq/bin/rabbitmqctl shutdown
-  fi
+  done
+  /usr/lib/rabbitmq/bin/rabbitmqctl start_app
+  /usr/lib/rabbitmq/bin/rabbitmqctl shutdown
 fi
 
 exec "$@"

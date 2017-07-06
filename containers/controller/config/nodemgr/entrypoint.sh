@@ -1,10 +1,13 @@
 #!/bin/bash
 set -e
 
+CONTROLLER_NODES=${CONTROLLER_NODES:-`hostname`}
+ANALYTICS_NODES=${ANALYTICS_NODES:-${CONTROLLER_NODES}}
+
 analytics_server_list=''
-IFS=' ' read -ra server_list <<< "${!ANALYTICS_SERVERS_*}"
+IFS=' ' read -ra server_list <<< "${ANALYTICS_NODES}"
 for server in "${server_list[@]}"; do
-  server_address=`echo ${!server}`
+  server_address=`echo ${server}`
   analytics_server_list+=$server_address:8086,,
 done
 analytics_list="${analytics_server_list::-1}"

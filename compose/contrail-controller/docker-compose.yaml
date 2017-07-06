@@ -1,26 +1,46 @@
 version: '2'
 services:
+  network:
+    image: docker.io/kubernetes/pause
+    network_mode: "host"
   cassandra:
-    image: contrail-database:4.0.0.0-20
+    image: contrail-controller-database:4.0.0.0-20
     env_file: ../common.env
     volumes:
      - /var/lib/cassandra/data
-    network_mode: "host"
+    network_mode: "service:network"
+    depends_on:
+      - network
   zookeeper:
-    image: contrail-zookeeper:4.0.0.0-20
+    image: contrail-controller-zookeeper:4.0.0.0-20
     env_file: ../common.env
     volumes:
      - /data
-    network_mode: "host"
+    network_mode: "service:network"
+    depends_on:
+      - network
   rabbitmq:
-    image: contrail-rabbitmq:4.0.0.0-20
+    image: contrail-controller-rabbitmq:4.0.0.0-20
     env_file: ../common.env
+    network_mode: "service:network"
+    depends_on:
+      - network
+  redis:
+    image: contrail-controller-redis:4.0.0.0-20
+    env_file: ../common.env
+    network_mode: "service:network"
     network_mode: "host"
-#  redis:
-#    image: contrail-redis:4.0.0.0-20
-#    env_file: ../common.env
-#    network_mode: "host"
-#  config-nodemgr:
-#    image: contrail-config-nodemgr:4.0.0.0-20
-#    env_file: ../common.env
-#    network_mode: "host"
+    depends_on:
+      - network
+  config-nodemgr:
+    image: contrail-controller-config-nodemgr:4.0.0.0-20
+    env_file: ../common.env
+    network_mode: "service:network"
+    depends_on:
+      - network
+  config-api:
+    image: contrail-controller-config-api:4.0.0.0-20
+    env_file: ../common.env
+    network_mode: "service:network"
+    depends_on:
+      - network

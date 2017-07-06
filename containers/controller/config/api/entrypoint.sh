@@ -1,5 +1,12 @@
 #!/bin/bash
 
+CONTROLLER_NODES=${CONTROLLER_NODES:-`hostname`}
+ANALYTICS_NODES=${ANALYTICS_NODES:-${CONTROLLER_NODES}}
+ZOOKEEPER_NODES=${ZOOKEEPER_NODES:-${CONTROLLER_NODES}}
+CONFIG_NODES=${CONFIG_NODES:-${CONTROLLER_NODES}}
+CASSANDRA_NODES=${CASSANDRA_NODES:-${CONTROLLER_NODES}}
+RABBITMQ_NODES=${RABBITMQ_NODES:-${CONTROLLER__NODES}}
+
 function get_listen_ip(){
   default_interface=`ip route show |grep "default via" |awk '{print $5}'`
   default_ip_address=`ip address show dev $default_interface |\
@@ -8,28 +15,12 @@ function get_listen_ip(){
 }
 
 function get_server_list(){
-  server_typ=$1
+  server_typ=$1_NODES
   port=$2
   server_list=''
-  case $server_typ in
-  ANALYTICS)
-    IFS=' ' read -ra server_list <<< "${!ANALYTICS_SERVERS_*}"
-    ;;
-  ZOOKEEPER)
-    IFS=' ' read -ra server_list <<< "${!ZOO_SERVERS_*}"
-    ;;
-  CONFIG)
-    IFS=' ' read -ra server_list <<< "${!CONFIG_SERVERS_*}"
-    ;;
-  CASSANDRA)
-    IFS=' ' read -ra server_list <<< "${!CASSANDRA_SERVERS_*}"
-    ;;
-  RABBIT)
-    IFS=' ' read -ra server_list <<< "${!RABBITMQ_SERVERS_*}"
-    ;;
-  esac
+  IFS=',' read -ra server_list <<< "${!server_typ}"
   for server in "${server_list[@]}"; do
-    server_address=`echo ${!server}`
+    server_address=`echo ${server}`
     extended_server_list+=${server_address}:${port}
   done
   extended_list="${extended_server_list::-1}"
@@ -39,7 +30,7 @@ function get_server_list(){
 CASSANDRA_PORT=${CONFIG_API_cassandra_port:-9160}
 ZOOKEEPER_PORT=${CONFIG_API_zookeeoer_port:-2181}
 ANALYTICS_PORT=${CONFIG_API_analytics_port:-8086}
-RABBIT_PORT=${CONFIG_API_rabbit_port:-8086}
+RABBITMQ_PORT=${CONFIG_API_rabbit_port:-5672}
 
 read -r -d '' contrail_api_config << EOM
 [DEFAULTS]
@@ -52,7 +43,7 @@ collectors=${CONFIG_API_collectors:-`get_server_list ANALYTICS "$ANALYTICS_PORT 
 listen_ip_addr=${CONFIG_API_listen_ip_addr:-`get_listen_ip`}
 list_optimization_enabled=${CONFIG_API_list_optimization_enabled:-True}
 rabbit_password=${CONFIG_API_rabbit_password:-guest}
-rabbit_server=${CONFIG_API_rabbit_server:-`get_server_list RABBIT "$RABBIT_PORT,"`}
+rabbit_server=${CONFIG_API_rabbit_server:-`get_server_list RABBITMQ "$RABBITMQ_PORT,"`}
 listen_port=${CONFIG_API_LISTEN_PORT:-8082}
 rabbit_user=${CONFIG_API_rabbit_user:-guest}
 aaa_mode=${CONFIG_API_aaa_mode:-no-auth}
@@ -104,7 +95,7 @@ EOM
 
 #get_kv
 echo "$contrail_api_config" > /etc/contrail/contrail-api.conf
-if [ $CONFIG_API_auth == "keystone" ]; then
+if [ $CONFIG_API_auth="keystone" ]; then
   echo "$contrail_keystone_auth_config" > /etc/contrail/contrail-keystone-auth.conf
 fi
 echo "$vnc_api_lib_config" > /etc/contrail/vnc_api_lib.ini

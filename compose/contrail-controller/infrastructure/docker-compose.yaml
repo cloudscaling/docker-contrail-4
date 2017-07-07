@@ -8,6 +8,9 @@ services:
   cassandra:
     image: contrail-controller-database:4.0.0.0-20
     env_file: ../../common.env
+    environment:
+     - CASSANDRA_START_RPC=true
+     - CASSANDRA_CLUSTER_NAME=contrail_database
     volumes:
      - /var/lib/cassandra/data
     network_mode: "service:network"
@@ -26,6 +29,8 @@ services:
   rabbitmq:
     image: contrail-controller-rabbitmq:4.0.0.0-20
     env_file: ../../common.env
+    environment:
+     - RABBITMQ_ERLANG_COOKIE=abcdefg
     network_mode: "service:network"
     depends_on:
       - network

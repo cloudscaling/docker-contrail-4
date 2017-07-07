@@ -5,7 +5,7 @@ ANALYTICS_NODES=${ANALYTICS_NODES:-${CONTROLLER_NODES}}
 ZOOKEEPER_NODES=${ZOOKEEPER_NODES:-${CONTROLLER_NODES}}
 CONFIG_NODES=${CONFIG_NODES:-${CONTROLLER_NODES}}
 CASSANDRA_NODES=${CASSANDRA_NODES:-${CONTROLLER_NODES}}
-RABBITMQ_NODES=${RABBITMQ_NODES:-${CONTROLLER__NODES}}
+RABBITMQ_NODES=${RABBITMQ_NODES:-${CONTROLLER_NODES}}
 
 function get_listen_ip(){
   default_interface=`ip route show |grep "default via" |awk '{print $5}'`
@@ -29,6 +29,7 @@ function get_server_list(){
 
 CASSANDRA_PORT=${CONFIG_cassandra_port:-9160}
 ZOOKEEPER_PORT=${CONFIG_zookeeoer_port:-2181}
+ANALYTICS_COLLECTOR_PORT=${ANALYTCS_COLLECTOR_analytics_port:-8086}
 ANALYTICS_PORT=${CONFIG_analytics_port:-8086}
 RABBITMQ_PORT=${CONFIG_rabbit_port:-5672}
 CONFIG_API_IP=${CONFIG_api_server_ip:-${VIP}}
@@ -46,6 +47,7 @@ rabbit_password=${CONFIG_rabbit_password:-guest}
 rabbit_server=${CONFIG_rabbit_server:-`get_server_list RABBITMQ "$RABBITMQ_PORT,"`}
 rabbit_user=${CONFIG_rabbit_user:-guest}
 redis_server=${CONFIG_redis_server:-127.0.0.1}
+collectors=${CONFIG_collectors:-`get_server_list ANALYTICS "$ANALYTICS_COLLECTOR_PORT "`}
 
 [SANDESH]
 sandesh_ssl_enable=${CONFIG_sandesh_ssl_enable:-False}

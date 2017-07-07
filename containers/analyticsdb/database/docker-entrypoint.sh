@@ -23,6 +23,9 @@ fi
 : ${CASSANDRA_SEEDS:="$CASSANDRA_BROADCAST_ADDRESS"}
 
 sed -ri 's/(- seeds:).*/\1 "'"$CASSANDRA_SEEDS"'"/' "$CASSANDRA_CONFIG/cassandra.yaml"
+if [ -n ${CASSANDRA_JMX_PORT} ]; then
+  sed -i "s/JMX_PORT=.*/JMX_PORT=\"${CASSANDRA_JMX_PORT}\"/g" $CASSANDRA_CONFIG/cassandra-env.sh
+fi
 
 for yaml in \
 	broadcast_address \
@@ -33,6 +36,10 @@ for yaml in \
 	num_tokens \
 	rpc_address \
 	start_rpc \
+        rpc_port \
+        native_transport_port \
+        storage_port \
+        ssl_storage_port '
 ; do
 	var="CASSANDRA_${yaml^^}"
 	val="${!var}"

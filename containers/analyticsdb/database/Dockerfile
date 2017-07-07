@@ -1,5 +1,5 @@
 # vim:set ft=dockerfile:
-FROM contrail-base:4.0.0.0-20
+FROM centos:7.3.1611
 
 # explicitly set user/group IDs
 RUN groupadd -r cassandra && useradd -r -g cassandra cassandra
@@ -34,5 +34,5 @@ VOLUME /var/lib/cassandra
 # 7199: JMX
 # 9042: CQL
 # 9160: thrift service
-EXPOSE 7000 7001 7199 9042 9160
+EXPOSE 7010 7011 7200 9043 9161
 CMD ["cassandra", "-f"]

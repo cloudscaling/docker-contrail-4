@@ -29,26 +29,35 @@ function get_server_list(){
 
 CASSANDRA_PORT=${CONFIG_cassandra_port:-9160}
 ZOOKEEPER_PORT=${CONFIG_zookeeoer_port:-2181}
-ANALYTICS_COLLECTOR_PORT=${ANALYTCS_COLLECTOR_analytics_port:-8086}
-RABBITMQ_PORT=${CONFIG__rabbit_port:-5672}
+ANALYTICS_COLLECTOR_PORT=${ANALYTCS_COLLECTOR_port:-8086}
+ANALYTICS_API_PORT=${ANALYTCS_API_analytics_port:-8081}
+RABBITMQ_PORT=${CONFIG_rabbit_port:-5672}
+CONFIG_API_IP=${CONFIG_api_server_ip:-${VIP}}
 
-read -r -d '' contrail_api_config << EOM
+read -r -d '' contrail_svcmonitor_config << EOM
 [DEFAULTS]
-log_file=${CONFIG_API_log_file:-/var/log/contrail/contrail-api.log}
-log_level=${CONFIG_API_log_level:-SYS_NOTICE}
+log_file=${CONFIG_SVC_MONITOR_log_file:-/var/log/contrail/contrail-svc-monitor.log}
+log_level=${CONFIG_SVC_MONITOR_log_level:-SYS_NOTICE}
+api_server_ip = ${CONFIG_API_IP:-`get_listen_ip`}
+api_server_port = ${CONFIG_api_server_port:-8082}
 cassandra_server_list=${CONFIG_cassandra_server_list:-`get_server_list CASSANDRA "$CASSANDRA_PORT "`}
 zk_server_ip=${CONFIG_zk_server_ip:-`get_server_list ZOOKEEPER "$ZOOKEEPER_PORT,"`}
 rabbit_vhost=${CONFIG_rabbit_vhost:-/}
-collectors=${CONFIG_collectors:-`get_server_list ANALYTICS "$ANALYTICS_COLLECTOR_PORT "`}
-listen_ip_addr=${CONFIG_API_listen_ip_addr:-0.0.0.0}
-listen_port=${CONFIG_API_listen_port:-8082}
-list_optimization_enabled=${CONFIG_API_list_optimization_enabled:-True}
 rabbit_password=${CONFIG_rabbit_password:-guest}
 rabbit_server=${CONFIG_rabbit_server:-`get_server_list RABBITMQ "$RABBITMQ_PORT,"`}
 rabbit_user=${CONFIG_rabbit_user:-guest}
-aaa_mode=${CONFIG_aaa_mode:-no-auth}
 redis_server=${CONFIG_redis_server:-127.0.0.1}
-auth=${CONFIG_API_auth:-""}
+
+[SECURITY]
+#use_certs=False
+#keyfile=/etc/contrail/ssl/private_keys/svc_monitor_key.pem
+#certfile=/etc/contrail/ssl/certs/svc_monitor.pem
+#ca_certs=/etc/contrail/ssl/certs/ca.pem
+
+[SCHEDULER]
+# Analytics server list used to get vrouter status and schedule service instance
+analytics_server_list = ${CONFIG_analytics_server_list:-`get_server_list ANALYTICS "$ANALYTICS_API_PORT "`}
+aaa_mode = ${ANALYTICS_aaa_mode:-no-auth}
 
 [SANDESH]
 sandesh_ssl_enable=${CONFIG_sandesh_ssl_enable:-False}
@@ -94,8 +103,8 @@ AUTHN_SERVER = ${CONFIG_AUTHN_SERVER:-""}
 EOM
 
 #get_kv
-echo "$contrail_api_config" > /etc/contrail/contrail-api.conf
-if [ $CONFIG_API_auth="keystone" ]; then
+echo "$contrail_svcmonitor_config" > /etc/contrail/contrail-svc-monitor.conf
+if [ $CONFIG_auth="keystone" ]; then
   echo "$contrail_keystone_auth_config" > /etc/contrail/contrail-keystone-auth.conf
 fi
 echo "$vnc_api_lib_config" > /etc/contrail/vnc_api_lib.ini

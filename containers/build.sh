@@ -16,6 +16,7 @@ if [ -z $1 ]; then
 else
   container_name=`echo $1 |cut -d"." -f2|tr "/" "-"`
   container_name=contrail${container_name}
-  docker build -t ${container_name}:${version} $1
+  docker build -t ${registry}/${container_name}:${version} $1
+  docker push ${registry}/${container_name}:${version}
   #docker save -o /var/lib/libvirt/images/docker/images/${container_name}-${version}.tar ${container_name}:${version}
 fi

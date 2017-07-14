@@ -7,7 +7,7 @@ services:
       - /etc/hosts:/etc/hosts
   cassandra:
     image: 10.87.64.33:5043/contrail-analyticsdb-database:4.0.0.0-20
-    env_file: ../../common.env
+    env_file: ../common.env
     environment:
      - CASSANDRA_START_RPC=true
      - CASSANDRA_CLUSTER_NAME=contrail_analytics_db
@@ -24,7 +24,7 @@ services:
     restart: on-failure
   kafka:
     image: 10.87.64.33:5043/contrail-analyticsdb-kafka:4.0.0.0-20
-    env_file: ../../common.env
+    env_file: ../common.env
     network_mode: "service:network"
     depends_on:
       - network

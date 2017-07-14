@@ -6,6 +6,7 @@ ZOOKEEPER_NODES=${ZOOKEEPER_NODES:-${CONTROLLER_NODES}}
 CONFIG_NODES=${CONFIG_NODES:-${CONTROLLER_NODES}}
 CASSANDRA_NODES=${CASSANDRA_NODES:-${CONTROLLER_NODES}}
 RABBITMQ_NODES=${RABBITMQ_NODES:-${CONTROLLER_NODES}}
+REDIS_NODES=${REDIS_NODES:-${REDIS_NODES}}
 
 function get_listen_ip(){
   default_interface=`ip route show |grep "default via" |awk '{print $5}'`
@@ -27,37 +28,45 @@ function get_server_list(){
   echo ${extended_list}
 }
 
-CASSANDRA_PORT=${CONFIG_cassandra_port:-9160}
+CASSANDRA_PORT=${ANALYTICS_cassandra_port:-9043}
 ZOOKEEPER_PORT=${CONFIG_zookeeoer_port:-2181}
 ANALYTICS_COLLECTOR_PORT=${ANALYTCS_COLLECTOR_analytics_port:-8086}
+ANALYTICS_API_HTTP_PORT=${ANALYTCS_API_http_port:-8090}
+ANALYTICS_API_REST_API_PORT=${ANALYTCS_API_rest_api_port:-8081}
 RABBITMQ_PORT=${CONFIG__rabbit_port:-5672}
+REDIS_PORT=${ANALYTICS_redis_port:-6379}
 
-read -r -d '' contrail_api_config << EOM
+read -r -d '' analytics_api_config << EOM
 [DEFAULTS]
-log_file=${CONFIG_API_log_file:-/var/log/contrail/contrail-api.log}
-log_level=${CONFIG_API_log_level:-SYS_NOTICE}
-cassandra_server_list=${CONFIG_cassandra_server_list:-`get_server_list CASSANDRA "$CASSANDRA_PORT "`}
-zk_server_ip=${CONFIG_zk_server_ip:-`get_server_list ZOOKEEPER "$ZOOKEEPER_PORT,"`}
-rabbit_vhost=${CONFIG_rabbit_vhost:-/}
-collectors=${CONFIG_collectors:-`get_server_list ANALYTICS "$ANALYTICS_COLLECTOR_PORT "`}
-listen_ip_addr=${CONFIG_API_listen_ip_addr:-0.0.0.0}
-listen_port=${CONFIG_API_listen_port:-8082}
-list_optimization_enabled=${CONFIG_API_list_optimization_enabled:-True}
-rabbit_password=${CONFIG_rabbit_password:-guest}
-rabbit_server=${CONFIG_rabbit_server:-`get_server_list RABBITMQ "$RABBITMQ_PORT,"`}
-rabbit_user=${CONFIG_rabbit_user:-guest}
-aaa_mode=${CONFIG_aaa_mode:-no-auth}
-redis_server=${CONFIG_redis_server:-127.0.0.1}
-auth=${CONFIG_API_auth:-""}
+host_ip = ${ANALYTICS_API_host_ip:-0.0.0.0}
+collectors = ${ANALYTICS_collectors:-`get_server_list ANALYTICS "$ANALYTICS_COLLECTOR_PORT "`}
+cassandra_server_list=${ANALYTICS_cassandra_server_list:-`get_server_list CASSANDRA "$CASSANDRA_PORT "`}
+http_server_port = ${ANALYTICS_API_HTTP_PORT}
+rest_api_port = ${ANALYTICS_API_REST_API_PORT}
+rest_api_ip = ${ANALYTICS_API_rest_api_ip:-0.0.0.0}
+log_local = ${ANALYTICS_API_log_local:-1}
+log_level = ${ANALYTICS_API_log_level:-SYS_NOTICE}
+#log_category = 
+log_file = ${ANALYTICS_API_log_file:-/var/log/contrail/contrail-analytics-api.log}
+# Sandesh send rate limit can be used to throttle system logs transmitted per
+# second. System logs are dropped if the sending rate is exceeded
+#sandesh_send_rate_limit =
+partitions=${ANALYTICS_partitions:-30}
+aaa_mode=${ANALYTICS_API_aaa_mode:-no-auth}
+
+[REDIS]
+server=${ANALYTICS_redis_server:-127.0.0.1}
+redis_server_port=${ANALYTICS_redis_server_port:-6379}
+redis_query_port=${ANALYTICS_redis_query_port:-6379}
+redis_uve_list = {ANALYTICS_redis_uve_list:-`get_server_list REDIS "$REDIS_PORT "`}
 
 [SANDESH]
-sandesh_ssl_enable=${CONFIG_sandesh_ssl_enable:-False}
-introspect_ssl_enable=${CONFIG_introspect_ssl_enable:-False}
-sandesh_keyfile=${CONFIG_sandesh_keyfile:-/etc/contrail/ssl/private/server-privkey.pem}
-sandesh_certfile=${CONFIG_sandesh_certfile:-/etc/contrail/ssl/certs/server.pem}
-sandesh_ca_cert=${CONFIG_sandesh_ca_cert:-/etc/contrail/ssl/certs/ca-cert.pem}
+sandesh_ssl_enable=${ANALYTICS_sandesh_ssl_enable:-False}
+introspect_ssl_enable=${ANALYTICS_introspect_ssl_enable:-False}
+sandesh_keyfile=${ANALYTICS_sandesh_keyfile:-/etc/contrail/ssl/private/server-privkey.pem}
+sandesh_certfile=${ANALYTICS_sandesh_certfile:-/etc/contrail/ssl/certs/server.pem}
+sandesh_ca_cert=${ANALYTICS_sandesh_ca_cert:-/etc/contrail/ssl/certs/ca-cert.pem}
 EOM
-
 
 read -r -d '' contrail_keystone_auth_config << EOM
 [KEYSTONE]
@@ -94,7 +103,7 @@ AUTHN_SERVER = ${CONFIG_AUTHN_SERVER:-""}
 EOM
 
 #get_kv
-echo "$contrail_api_config" > /etc/contrail/contrail-api.conf
+echo "$analytics_api_config" > /etc/contrail/contrail-analytics-api.conf
 if [ $CONFIG_API_auth="keystone" ]; then
   echo "$contrail_keystone_auth_config" > /etc/contrail/contrail-keystone-auth.conf
 fi

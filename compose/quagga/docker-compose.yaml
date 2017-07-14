@@ -1,14 +1,14 @@
 version: '2'
 services:
   zebra:
-    image: contrail-quagga-zebra:4.0.0.0-20
+    image: 10.87.64.33:5043/contrail-quagga-zebra:4.0.0.0-20
     env_file: ../common.env
     network_mode: host
     privileged: true
     volumes:
      - /etc/quagga
   ospf:
-    image: contrail-quagga-ospf:4.0.0.0-20
+    image: 10.87.64.33:5043/contrail-quagga-ospf:4.0.0.0-20
     env_file: ../common.env
     network_mode: "service:zebra"
     privileged: true

@@ -14,7 +14,7 @@ gpgcheck = 0\n'\
 
 ENV CASSANDRA_VERSION 3.0.14
 
-RUN yum install -y cassandra-"$CASSANDRA_VERSION"
+RUN yum install -y cassandra-"$CASSANDRA_VERSION" iproute
 
 # https://issues.apache.org/jira/browse/CASSANDRA-11661
 RUN sed -ri 's/^(JVM_PATCH_VERSION)=.*/\1=25/' /etc/cassandra/default.conf/cassandra-env.sh

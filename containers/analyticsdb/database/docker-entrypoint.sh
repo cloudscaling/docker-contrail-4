@@ -27,6 +27,10 @@ if [ -n ${CASSANDRA_JMX_PORT} ]; then
   sed -i "s/JMX_PORT=.*/JMX_PORT=\"${CASSANDRA_JMX_PORT}\"/g" $CASSANDRA_CONFIG/cassandra-env.sh
 fi
 
+if [ ${CASSANDRA_REPLACE} ]; then
+  echo JVM_OPTS=\"\$JVM_OPTS -Dcassandra.replace_address=$CASSANDRA_LISTEN_ADDRESS\" >> $CASSANDRA_CONFIG/cassandra-env.sh
+fi
+
 for yaml in \
 	broadcast_address \
 	broadcast_rpc_address \
@@ -39,7 +43,7 @@ for yaml in \
         rpc_port \
         native_transport_port \
         storage_port \
-        ssl_storage_port '
+        ssl_storage_port \
 ; do
 	var="CASSANDRA_${yaml^^}"
 	val="${!var}"

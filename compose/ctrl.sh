@@ -7,12 +7,18 @@ function cmd_up(){
 function cmd_down(){
   docker-compose down
 }
+function cmd_ps(){
+  docker-compose ps
+}
 case $2 in
   up)
     dc_cmd=cmd_up
     ;;
   down)
     dc_cmd=cmd_down
+    ;;
+  ps)
+    dc_cmd=cmd_ps
     ;;
   *)
     echo -e "\n    wrong option

@@ -246,7 +246,8 @@ if [ ! -f /etc/rabbitmq/rabbitmq.config ]; then
 	shouldWriteConfig=1
 fi
 
-if [ "$1" = 'rabbitmq-server' ] && [ "$shouldWriteConfig" ]; then
+#if [ "$1" = 'rabbitmq-server' ] && [ "$shouldWriteConfig" ]; then
+if [ "$shouldWriteConfig" ]; then
 	fullConfig=()
 
 	rabbitConfig=(

@@ -13,10 +13,10 @@ CONTROLLER_NODES=${CONTROLLER_NODES:-`hostname`}
 ZOOKEEPER_NODES=${ZOOKEEPER_NODES:-${CONTROLLER_NODES}}
 zk_server_list=''
 server_index=1
-IFS=' ' read -ra server_list <<< "${ZOOKEEPER_NODES}"
+IFS=',' read -ra server_list <<< "${ZOOKEEPER_NODES}"
 for server in "${server_list[@]}"; do
   zk_server_list+=${server}:2181,
-  if [ `get_listen_ip` == $server ]; then
+  if [ ${default_ip_address} == $server ]; then
     my_index=$server_index
   fi
   server_index=$((server_index+1))

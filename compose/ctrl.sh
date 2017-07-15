@@ -26,7 +26,7 @@ case $2 in
     exit 1
     ;;
 esac
-contrail_controller=(database config)
+contrail_controller=(database config webui)
 function cmd_contrail_controller(){
   for role in ${contrail_controller[@]}
   do

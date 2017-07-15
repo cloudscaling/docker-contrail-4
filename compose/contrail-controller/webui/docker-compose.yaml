@@ -1,0 +1,21 @@
+version: '2'
+services:
+  network:
+    image: docker.io/kubernetes/pause
+    network_mode: "host"
+    volumes:
+      - /etc/hosts:/etc/hosts
+  job:
+    image: 10.87.64.33:5043/contrail-controller-webui-job:4.0.0.0-20
+    env_file: ../../common.env
+    network_mode: "service:network"
+    depends_on:
+      - network
+    #restart: on-failure
+  web:
+    image: 10.87.64.33:5043/contrail-controller-webui-web:4.0.0.0-20
+    env_file: ../../common.env
+    network_mode: "service:network"
+    depends_on:
+      - network
+    ##restart: on-failure

@@ -1,6 +1,6 @@
 [Contrail]
 name=Contrail Repo
-baseurl=http://10.87.64.32/contrail-4.0.0.0-20
+baseurl=http://10.87.64.32/contrail-4.0.1.0-23
 enabled=1
 gpgcheck=0
 protect=1

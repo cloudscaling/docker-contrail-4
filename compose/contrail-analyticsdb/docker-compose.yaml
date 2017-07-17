@@ -28,3 +28,9 @@ services:
     network_mode: "service:network"
     depends_on:
       - network
+  redis-query:
+    image: 10.87.64.33:5043/contrail-analyticsdb-redis-query:4.0.0.0-20
+    env_file: ../common.env
+    network_mode: "service:network"
+    depends_on:
+      - network

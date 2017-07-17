@@ -3,12 +3,6 @@ services:
   network:
     image: docker.io/kubernetes/pause
     network_mode: "host"
-  redis-query:
-    image: 10.87.64.33:5043/contrail-analytics-redis-query:4.0.0.0-20
-    env_file: ../common.env
-    network_mode: "service:network"
-    depends_on:
-      - network
   api:
     image: 10.87.64.33:5043/contrail-analytics-api:4.0.0.0-20
     env_file: ../common.env

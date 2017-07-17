@@ -59,7 +59,7 @@ test_mode=${QUERY_ENGINE_test_mode:0}
 # sandesh_send_rate_limit=
 
 [REDIS]
-port=${QUERY_ENGINE_REDIS_port:-6379}
+port=${QUERY_ENGINE_REDIS_port:-6381}
 server=${QUERY_ENGINE_REDIS_server:-127.0.0.1}
 
 [SANDESH]

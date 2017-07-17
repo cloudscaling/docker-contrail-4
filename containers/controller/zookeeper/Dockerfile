@@ -17,7 +17,7 @@ RUN set -x \
     && mkdir -p "$ZOO_DATA_LOG_DIR" "$ZOO_DATA_DIR" "$ZOO_CONF_DIR" \
     && chown "$ZOO_USER:$ZOO_USER" "$ZOO_DATA_LOG_DIR" "$ZOO_DATA_DIR" "$ZOO_CONF_DIR"
 
-ARG DISTRO_NAME=zookeeper-3.4.10
+ARG DISTRO_NAME=zookeeper-3.4.8
 
 RUN curl -o $DISTRO_NAME.tar.gz http://www.apache.org/dist/zookeeper/$DISTRO_NAME/$DISTRO_NAME.tar.gz \
     && tar -xzf "$DISTRO_NAME.tar.gz" \

@@ -35,6 +35,11 @@ function cmd_contrail_controller(){
     cd -
   done
 }
+function cmd_contrail_controllerdb(){
+  cd contrail-controller/database
+  ${dc_cmd}
+  cd -
+}
 function cmd_contrail_analyticsdb(){
   cd contrail-analyticsdb
   ${dc_cmd}

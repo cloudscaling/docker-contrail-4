@@ -28,19 +28,21 @@ function get_server_list(){
   echo ${extended_list}
 }
 
-CASSANDRA_PORT=${ANALYTICS_cassandra_port:-9043}
+CASSANDRA_PORT=${ANALYTICS_cassandra_port:-9042}
 ZOOKEEPER_PORT=${CONFIG_zookeeoer_port:-2181}
 ANALYTICS_COLLECTOR_PORT=${ANALYTCS_COLLECTOR_analytics_port:-8086}
 ANALYTICS_API_HTTP_PORT=${ANALYTCS_API_http_port:-8090}
 ANALYTICS_API_REST_API_PORT=${ANALYTCS_API_rest_api_port:-8081}
 RABBITMQ_PORT=${CONFIG__rabbit_port:-5672}
 REDIS_PORT=${ANALYTICS_redis_port:-6379}
+CONFIG_PORT=${COLLECTOR_config_port:-8082}
 
 read -r -d '' analytics_api_config << EOM
 [DEFAULTS]
 host_ip = ${ANALYTICS_API_host_ip:-0.0.0.0}
 collectors = ${ANALYTICS_collectors:-`get_server_list ANALYTICS "$ANALYTICS_COLLECTOR_PORT "`}
 cassandra_server_list=${ANALYTICS_cassandra_server_list:-`get_server_list CASSANDRA "$CASSANDRA_PORT "`}
+api_server=${ANALYTICS_api_server:-`get_server_list CONFIG "$CONFIG_PORT "`}
 http_server_port = ${ANALYTICS_API_HTTP_PORT}
 rest_api_port = ${ANALYTICS_API_REST_API_PORT}
 rest_api_ip = ${ANALYTICS_API_rest_api_ip:-0.0.0.0}

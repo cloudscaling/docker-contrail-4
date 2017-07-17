@@ -29,7 +29,7 @@ function get_server_list(){
   echo ${extended_list}
 }
 
-CASSANDRA_PORT=${ANALYTICS_cassandra_port:-9043}
+CASSANDRA_PORT=${ANALYTICS_cassandra_port:-9042}
 ZOOKEEPER_PORT=${CONFIG_zookeeoer_port:-2181}
 ANALYTICS_COLLECTOR_PORT=${ANALYTCS_COLLECTOR_analytics_port:-8086}
 ANALYTICS_API_HTTP_PORT=${ANALYTCS_API_http_port:-8090}
@@ -49,7 +49,7 @@ hostip=${QUERY_ENGINE_hostip:-`get_listen_ip`}
 http_server_port=${QUERY_ENGINE_http_server_port:-8091}
 log_local = ${QUERY_ENGINE_log_local:-1}
 log_level = ${QUERY_ENGINE_log_level:-SYS_NOTICE}
-log_file = ${QUERY_ENGINE_log_file:-/var/log/contrail/contrail-alarm-gen.log}
+log_file = ${QUERY_ENGINE_log_file:-/var/log/contrail/contrail-query-engine.log}
 max_slice=${QUERY_ENGINE_max_slice:-100}
 max_tasks=${QUERY_ENGINE_max_tasks:-16}
 start_time=${QUERY_ENGINE_start_time:-0}

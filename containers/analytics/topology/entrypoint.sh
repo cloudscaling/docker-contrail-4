@@ -29,7 +29,7 @@ function get_server_list(){
   echo ${extended_list}
 }
 
-CASSANDRA_PORT=${ANALYTICS_cassandra_port:-9043}
+CASSANDRA_PORT=${ANALYTICS_cassandra_port:-9042}
 ZOOKEEPER_PORT=${CONFIG_zookeeoer_port:-2181}
 ANALYTICS_COLLECTOR_PORT=${ANALYTCS_COLLECTOR_analytics_port:-8086}
 ANALYTICS_API_HTTP_PORT=${ANALYTCS_API_http_port:-8090}

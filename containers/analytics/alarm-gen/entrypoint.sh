@@ -2,6 +2,7 @@
 
 CONTROLLER_NODES=${CONTROLLER_NODES:-`hostname`}
 ANALYTICS_NODES=${ANALYTICS_NODES:-${CONTROLLER_NODES}}
+ANALYTICS_REDIS_NODES=${ANALYTICS_REDIS_NODES:-${CONTROLLER_NODES}}
 ZOOKEEPER_NODES=${ZOOKEEPER_NODES:-${CONTROLLER_NODES}}
 CONFIG_NODES=${CONFIG_NODES:-${CONTROLLER_NODES}}
 CASSANDRA_NODES=${CASSANDRA_NODES:-${CONTROLLER_NODES}}
@@ -23,45 +24,45 @@ function get_server_list(){
   IFS=',' read -ra server_list <<< "${!server_typ}"
   for server in "${server_list[@]}"; do
     server_address=`echo ${server}`
-    extended_server_list+=${server_address}:${port}
+    extended_server_list+=${server_address}${port}
   done
   extended_list="${extended_server_list::-1}"
   echo ${extended_list}
 }
 
-CASSANDRA_PORT=${ANALYTICS_cassandra_port:-9043}
+CASSANDRA_PORT=${ANALYTICS_cassandra_port:-9042}
 ZOOKEEPER_PORT=${CONFIG_zookeeoer_port:-2181}
 ANALYTICS_COLLECTOR_PORT=${ANALYTCS_COLLECTOR_analytics_port:-8086}
+ANALYTICS_REDIS_PORT=${ANALYTICS_REDIS_PORT:-6381}
 ANALYTICS_API_HTTP_PORT=${ANALYTCS_API_http_port:-8090}
 ANALYTICS_API_REST_API_PORT=${ANALYTCS_API_rest_api_port:-8081}
 RABBITMQ_PORT=${CONFIG__rabbit_port:-5672}
-REDIS_PORT=${ANALYTICS_redis_port:-6379}
 KAFKA_PORT=${ALARM_GEN_kafka_port:-9092}
 CONFIG_PORT=${COLLECTOR_config_port:-8082}
 
 read -r -d '' alarm_gen_config << EOM
 [DEFAULTS]
 host_ip = ${ANALYTICS_ALARM_GEN_host_ip:-`get_listen_ip`}
-collectors = ${ANALYTICS_collectors:-`get_server_list ANALYTICS "$ANALYTICS_COLLECTOR_PORT "`}
+collectors = ${ANALYTICS_collectors:-`get_server_list ANALYTICS ":$ANALYTICS_COLLECTOR_PORT "`}
 http_server_port = ${ALARM_GEN_http_server_port:-5995}
 log_local = ${ALARM_GEN_log_local:-1}
 log_level = ${ALARM_GEN_log_level:-SYS_NOTICE}
 #log_category = 
 log_file = ${ALARM_GEN_log_file:-/var/log/contrail/contrail-alarm-gen.log}
-kafka_broker_list=${ALARM_GEN_kafka_broker_broker_list:-`get_server_list KAFKA "$KAFKA_PORT "`}
+kafka_broker_list=${ALARM_GEN_kafka_broker_broker_list:-`get_server_list KAFKA ":$KAFKA_PORT "`}
 partitions=${ALARM_GEN_partitions:-30}
-zk_list = ${ALARM_GEN_zk_list:-`get_server_list ZOOKEEPER "$ZOOKEEPER_PORT "`}
-rabbitmq_server_list = ${ALARM_GEN_rabbitmq_server_list:-`get_server_list RABBITMQ "$RABBITMQ_PORT,"`}
+zk_list = ${ALARM_GEN_zk_list:-`get_server_list ZOOKEEPER ":$ZOOKEEPER_PORT "`}
+rabbitmq_server_list = ${ALARM_GEN_rabbitmq_server_list:-`get_server_list RABBITMQ ","`}
 rabbitmq_port = ${RABBITMQ_PORT}
 
 [API_SERVER]
 # List of api-servers in ip:port format separated by space
-api_server_list=${ALARM_GEN_api_server_list:-`get_server_list CONFIG "$CONFIG_PORT "`}
+api_server_list=${ALARM_GEN_api_server_list:-`get_server_list CONFIG ":$CONFIG_PORT "`}
 api_server_use_ssl=${ALARM_GEN_api_server_use_ssl:-False}
 
 [REDIS]
-redis_server_port=${ALARM_GEN_redis_server_port:-6379}
-#redis_uve_list=ip1:6379 ip2:6379
+#redis_server_port=${ALARM_GEN_redis_server_port:-6381}
+redis_uve_list=${ALARM_GEN_redis_uve_list:-`get_server_list ANALYTICS_REDIS ":$ANALYTICS_REDIS_PORT "`}
 
 [SANDESH]
 sandesh_ssl_enable=${ALARM_GEN_sandesh_ssl_enable:-False}

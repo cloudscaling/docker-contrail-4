@@ -29,7 +29,7 @@ function get_server_list(){
   echo ${extended_list}
 }
 
-CASSANDRA_PORT=${ANALYTICS_cassandra_port:-9043}
+CASSANDRA_PORT=${ANALYTICS_cassandra_port:-9042}
 ZOOKEEPER_PORT=${CONFIG_zookeeoer_port:-2181}
 ANALYTICS_COLLECTOR_PORT=${ANALYTCS_COLLECTOR_analytics_port:-8086}
 ANALYTICS_API_HTTP_PORT=${ANALYTCS_API_http_port:-8090}
@@ -48,6 +48,7 @@ analytics_flow_ttl=${COLLECTOR_analytics_flow_ttl:-2}
 
 cassandra_server_list=${COLLECTOR_cassandra_server_list:-`get_server_list CASSANDRA "$CASSANDRA_PORT "`}
 kafka_broker_list=${COLLECTOR_broker_broker_list:-`get_server_list KAFKA "$KAFKA_PORT "`}
+zookeeper_server_list=${COLLECTOR_zookeeper_server_list:-`get_server_list ZOOKEEPER "$ZOOKEEPER_PORT,"`}
 partitions=${COLLECTOR_partitions:-30}
 
 hostip=${COLLECTOR_host_ip:-`get_listen_ip`}

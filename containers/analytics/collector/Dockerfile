@@ -1,4 +1,4 @@
-FROM  10.87.64.33:5043/contrail-analytics-base:4.0.1.0-23
+FROM  10.87.64.33:5043/contrail-analytics-base:4.0.0.0-20
 COPY entrypoint.sh /
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["/usr/bin/contrail-collector"]

@@ -1,5 +1,5 @@
 #!/bin/bash
-version=4.0.1.0-23
+version=4.0.0.0-20
 registry=10.87.64.33:5043
 opts=$2
 if [ -z $1 ]; then

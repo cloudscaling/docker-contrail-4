@@ -1,5 +1,5 @@
 # vim:set ft=dockerfile:
-FROM 10.87.64.33:5043/contrail-base:4.0.1.0-23
+FROM 10.87.64.33:5043/contrail-base:4.0.0.0-20
 
 # explicitly set user/group IDs
 RUN groupadd -r cassandra && useradd -r -g cassandra cassandra
@@ -7,12 +7,12 @@ RUN groupadd -r cassandra && useradd -r -g cassandra cassandra
 RUN echo $'[cassandra]\n\
 [cassandra]\n\
 name = Apache Cassandra repo\n\
-baseurl = http://www.apache.org/dist/cassandra/redhat/30x\n\
+baseurl = http://www.apache.org/dist/cassandra/redhat/22x\n\
 enabled = 1\n\
 gpgcheck = 0\n'\
 >> /etc/yum.repos.d/cassandra.repo
 
-ENV CASSANDRA_VERSION 3.0.14
+ENV CASSANDRA_VERSION 2.2.10
 
 RUN yum install -y cassandra-"$CASSANDRA_VERSION"
 

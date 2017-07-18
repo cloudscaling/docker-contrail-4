@@ -6,7 +6,7 @@ services:
     volumes:
       - /etc/hosts:/etc/hosts
 #  cassandra:
-#    image: 10.87.64.33:5043/contrail-analyticsdb-database:4.0.1.0-23
+#    image: 10.87.64.33:5043/contrail-analyticsdb-database:4.0.0.0-20
 #    env_file: ../common.env
 #    environment:
 #     - CASSANDRA_START_RPC=true
@@ -23,13 +23,13 @@ services:
 #      - network
 #    restart: on-failure
   kafka:
-    image: 10.87.64.33:5043/contrail-analyticsdb-kafka:4.0.1.0-23
+    image: 10.87.64.33:5043/contrail-analyticsdb-kafka:4.0.0.0-20
     env_file: ../common.env
     network_mode: "service:network"
     depends_on:
       - network
   redis-query:
-    image: 10.87.64.33:5043/contrail-analyticsdb-redis-query:4.0.1.0-23
+    image: 10.87.64.33:5043/contrail-analyticsdb-redis-query:4.0.0.0-20
     env_file: ../common.env
     network_mode: "service:network"
     depends_on:

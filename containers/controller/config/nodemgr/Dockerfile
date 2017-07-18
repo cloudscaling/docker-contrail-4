@@ -1,4 +1,4 @@
-FROM 10.87.64.33:5043/contrail-controller-config-base:4.0.1.0-23
+FROM 10.87.64.33:5043/contrail-controller-config-base:4.0.0.0-20
 RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done); \
 rm -f /lib/systemd/system/multi-user.target.wants/*;\
 rm -f /etc/systemd/system/*.wants/*;\

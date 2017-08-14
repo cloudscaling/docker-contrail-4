@@ -33,7 +33,7 @@ function get_server_list(){
 CASSANDRA_PORT=${ANALYTICS_cassandra_port:-9042}
 ZOOKEEPER_PORT=${CONFIG_zookeeoer_port:-2181}
 ANALYTICS_COLLECTOR_PORT=${ANALYTCS_COLLECTOR_analytics_port:-8086}
-ANALYTICS_REDIS_PORT=${ANALYTICS_REDIS_PORT:-6381}
+ANALYTICS_REDIS_PORT=${ANALYTICS_REDIS_PORT:-6379}
 ANALYTICS_API_HTTP_PORT=${ANALYTCS_API_http_port:-8090}
 ANALYTICS_API_REST_API_PORT=${ANALYTCS_API_rest_api_port:-8081}
 RABBITMQ_PORT=${CONFIG__rabbit_port:-5672}
@@ -61,7 +61,7 @@ api_server_list=${ALARM_GEN_api_server_list:-`get_server_list CONFIG ":$CONFIG_P
 api_server_use_ssl=${ALARM_GEN_api_server_use_ssl:-False}
 
 [REDIS]
-#redis_server_port=${ALARM_GEN_redis_server_port:-6381}
+#redis_server_port=${ALARM_GEN_redis_server_port:-6379}
 redis_uve_list=${ALARM_GEN_redis_uve_list:-`get_server_list ANALYTICS_REDIS ":$ANALYTICS_REDIS_PORT "`}
 
 [SANDESH]

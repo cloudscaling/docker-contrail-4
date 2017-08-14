@@ -36,7 +36,7 @@ ANALYTICS_API_HTTP_PORT=${ANALYTCS_API_http_port:-8090}
 ANALYTICS_API_REST_API_PORT=${ANALYTCS_API_rest_api_port:-8081}
 RABBITMQ_PORT=${CONFIG__rabbit_port:-5672}
 REDIS_PORT=${ANALYTICS_redis_port:-6379}
-REDIS_QUERY_PORT=${ANALYTICS_redis_port:-6381}
+REDIS_QUERY_PORT=${ANALYTICS_redis_port:-6379}
 CONFIG_PORT=${COLLECTOR_config_port:-8082}
 
 read -r -d '' analytics_api_config << EOM
@@ -62,7 +62,7 @@ aaa_mode=${ANALYTICS_API_aaa_mode:-no-auth}
 [REDIS]
 #server=${ANALYTICS_redis_server:-127.0.0.1}
 #redis_server_port=${ANALYTICS_redis_server_port:-6379}
-redis_query_port=${ANALYTICS_redis_query_port:-6381}
+redis_query_port=${ANALYTICS_redis_query_port:-6379}
 #redis_uve_list = 127.0.0.1:6379
 redis_uve_list =${ANALYTICS_redis_uve_list:-`get_server_list ANALYTICS_REDIS "$REDIS_QUERY_PORT "`}
 

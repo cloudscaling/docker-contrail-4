@@ -36,7 +36,7 @@ ANALYTICS_API_HTTP_PORT=${ANALYTCS_API_http_port:-8090}
 ANALYTICS_API_REST_API_PORT=${ANALYTCS_API_rest_api_port:-8081}
 RABBITMQ_PORT=${CONFIG__rabbit_port:-5672}
 REDIS_PORT=${ANALYTICS_redis_port:-6379}
-REDIS_QUERY_PORT=${ANALYTICS_redis_port:-6381}
+REDIS_QUERY_PORT=${ANALYTICS_redis_port:-6379}
 KAFKA_PORT=${COLLECTOR_kafka_port:-9092}
 CONFIG_PORT=${COLLECTOR_config_port:-8082}
 
@@ -117,7 +117,7 @@ low_watermark2.message_severity_level=${COLLECTOR_low_watermark2_message_severit
 
 [REDIS]
 # Port to connect to for communicating with redis-server
-#port=${COLLECTOR_REDIS_port:-6381}
+#port=${COLLECTOR_REDIS_port:-6379}
 
 # IP address of redis-server
 server=${COLLECTOR_REDIS_server:-127.0.0.1}

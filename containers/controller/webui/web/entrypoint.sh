@@ -118,11 +118,11 @@ config.analytics.ca = ${analytics_ca:-''};
 config.analytics.statusURL = ${analytics_statusURL:-'"/analytics/uves/bgp-peers"'};
 
 config.dns = {};
-config.dns.server_ip = [${dns_server_ip:-`get_server_list CONFIG`];
+config.dns.server_ip = [${dns_server_ip:-`get_server_list CONFIG`}];
 config.dns.server_port = ${dns_server_port:-'8092'};
 config.dns.statusURL = ${dns_statusURL:-'"/Snh_PageReq?x=AllEntries%20VdnsServersReq"'};
 
-config.vcenter = {}};
+config.vcenter = {};
 config.vcenter.server_ip = '127.0.0.1';         //vCenter IP
 config.vcenter.server_port = '443';             //Port
 config.vcenter.authProtocol = 'https';          //http or https

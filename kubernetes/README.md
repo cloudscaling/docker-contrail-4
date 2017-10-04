@@ -1,7 +1,7 @@
 # Provision Contrail in Kubernetes for CNI plugin:
 
 The following short sequence is a working guideline to build and run Contrail in Kubernetes with CNI.
-It is by no means production-ready or finished. Used it as a collection of approximate HOWTOs.
+It is by no means production-ready or finished. Use it as a collection of approximate HOWTOs.
 It will be updated in the future.
 Now it's checked with CentOS containers only, however host system can be Ubuntu 16.04, for example.
 

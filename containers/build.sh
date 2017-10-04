@@ -1,6 +1,6 @@
 #!/bin/bash
-version=4.0.0.0-20
-registry=10.87.64.33:5043
+version=4.0.1.0-32
+registry=localhost:5000
 opts=$2
 if [ -z $1 ]; then
   for dir in `find . -type d`
@@ -17,6 +17,9 @@ if [ -z $1 ]; then
 else
   container_name=`echo $1 |cut -d"." -f2|tr "/" "-"`
   container_name=contrail${container_name}
+  echo ${opts}
+  echo ${container_name}
+  echo ${version}
   docker build ${opts} -t ${registry}/${container_name}:${version} $1
   docker push ${registry}/${container_name}:${version}
   #docker save -o /var/lib/libvirt/images/docker/images/${container_name}-${version}.tar ${container_name}:${version}

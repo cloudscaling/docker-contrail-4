@@ -1,4 +1,4 @@
-FROM  10.87.64.33:5043/contrail-analytics-base:4.0.0.0-20
+FROM  localhost:5000/contrail-analytics-base:4.0.1.0-32
 COPY entrypoint.sh /
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["/usr/bin/contrail-query-engine","--conf_file","/etc/contrail/contrail-query-engine.conf"]

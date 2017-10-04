@@ -1,5 +1,5 @@
 FROM centos:7.3.1611
-ARG REPO_URL=http://10.87.64.32/contrail-4.0.0.0-20
+ARG REPO_URL=http://10.0.2.15/contrail
 RUN printf "[contrail] \nname = Contrail repo \nbaseurl = $REPO_URL \nenabled = 1 \ngpgcheck = 0\n" >> /etc/yum.repos.d/contrail.repo
 #RUN echo $'[contrail]\n\
 #name = Contrail repo\n\

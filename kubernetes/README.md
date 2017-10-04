@@ -21,8 +21,7 @@ Now it's checked with CentOS containers only, however host system can be Ubuntu 
 
 * Use change_contrail_version.sh to update version before build (e.g., ```change_contrail_version.sh 4.0.1.0-32 4.0.1.0-33```
 
-* Change IP 10.0.2.15 everywhere to IP of your repo URLs and to (another) IP of your controller nodes
-
+* Change IP 10.0.2.15 everywhere to IP of your repo URLs and to (another) IP of your controller nodes, 
   you can employ something like the following script to make changes across all code:
   
   ```for fn in `grep -r -l 10.0.2.15 *`; do sed 's/10.0.2.15/192.168.0.1/g' < "$fn" > result; rm "$fn"; mv result "$fn"; done```
@@ -42,8 +41,11 @@ Now it's checked with CentOS containers only, however host system can be Ubuntu 
 
 * Check the deployment by:
   ```kubectl -n=kube-system get pods```
+  
+  Check WebUI in https://localhost:8143 (login:admin password:contrail123)
 
 # Debug containers
+
 You can debug particular containers in the following manner
 
 * ```docker run --net=host -itd --entrypoint sleep --env-file pathto_common.env --name mycontainer container_name 10000``

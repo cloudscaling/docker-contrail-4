@@ -48,7 +48,7 @@ Now it's checked with CentOS containers only, however host system can be Ubuntu 
 
 You can debug particular containers in the following manner
 
-* ```docker run --net=host -itd --entrypoint sleep --env-file pathto_common.env --name mycontainer container_name 10000``
+* ```docker run --net=host -itd --entrypoint sleep --env-file pathto_common.env --name mycontainer container_name 10000```
 
   this starts your container in the background without executing the entrypoint
   

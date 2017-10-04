@@ -45,10 +45,16 @@ Now it's checked with CentOS containers only, however host system can be Ubuntu 
 # Debug containers
 You can debug particular containers in the following manner
 
-* ```docker run --net=host -itd --entrypoint sleep --env-file pathto_common.env --name mycontainer container_name 10000```
+* ```docker run --net=host -itd --entrypoint sleep --env-file pathto_common.env --name mycontainer container_name 10000``
+
   this starts your container in the background without executing the entrypoint
+  
 * ```docker exec -it mycontainer /bin/bash```
+
   then you are inside the container
+  
 * ```/entrypoint.sh```
+
   executes the entrypoint script and populates configuration
+  
 * then execute the cmd line as defined in the dockerfile

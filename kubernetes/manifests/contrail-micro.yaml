@@ -13,10 +13,10 @@ data:
     enable_control_service = True
     enable_webui_service = True
     introspect_ssl_enable = False
-    config_nodes = 10.0.2.15
-    controller_nodes = 10.0.2.15
-    analytics_nodes = 10.0.2.15
-    analyticsdb_nodes = 10.0.2.15
+    config_nodes = {{config_nodes}}
+    controller_nodes = {{controller_nodes}}
+    analytics_nodes = {{analytics_nodes}}
+    analyticsdb_nodes = {{analyticsdb_nodes}}
     # analyticsdb_minimum_diskgb = 50
     # configdb_minimum_diskgb = 5
   agent-config: |-
@@ -31,7 +31,7 @@ data:
     cluster_network = {}
     service_subnets = 10.96.0.0/12
     pod_subnets = 10.32.0.0/12
-    api_server = 10.0.2.15
+    api_server = {{api_server}}
   kubernetes-agent-config: |-
     [AGENT]
 ---
@@ -41,7 +41,7 @@ metadata:
   name: env
   namespace: kube-system
 data:
-  CONTROLLER_NODES: 10.0.2.15
+  CONTROLLER_NODES: {{controller_nodes}}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -49,10 +49,10 @@ metadata:
   name: contrail-analyticsdb-config
   namespace: kube-system
 data:
-  CASSANDRA_SEEDS: 10.0.2.15
+  CASSANDRA_SEEDS: {{analyticsdb_nodes}}
   CASSANDRA_CLUSTER_NAME: Contrail
   CASSANDRA_START_RPC: "true"
-  CASSANDRA_LISTEN_ADDRESS: 10.0.2.15
+  CASSANDRA_LISTEN_ADDRESS: {{analyticsdb_nodes}}
   JVM_EXTRA_OPTS: >-
     -Dcassandra.rpc_port=9160
     -Dcassandra.native_transport_port=9042
@@ -65,10 +65,10 @@ metadata:
   name: contrail-configdb-config
   namespace: kube-system
 data:
-  CASSANDRA_SEEDS: 10.0.2.15
+  CASSANDRA_SEEDS: {{config_nodes}}
   CASSANDRA_CLUSTER_NAME: ContrailConfigDB
   CASSANDRA_START_RPC: "true"
-  CASSANDRA_LISTEN_ADDRESS: 10.0.2.15
+  CASSANDRA_LISTEN_ADDRESS: {{config_nodes}}
   JVM_EXTRA_OPTS: >-
     -Dcassandra.rpc_port=9161
     -Dcassandra.native_transport_port=9041
@@ -152,7 +152,7 @@ spec:
       hostNetwork: true
       containers:
       - name: kafka
-        image: "localhost:5000/contrail-analyticsdb-kafka:4.0.1.0-32"
+        image: "{{contrail_docker_repository}}/contrail-analyticsdb-kafka:{{contrail_version}}"
         imagePullPolicy: ""
         securityContext:
           privileged: true
@@ -283,7 +283,7 @@ spec:
       hostNetwork: true
       containers:
       - name: contrail-analytics-api
-        image: "localhost:5000/contrail-analytics-api:4.0.1.0-32"
+        image: "{{contrail_docker_repository}}/contrail-analytics-api:{{contrail_version}}"
         imagePullPolicy: ""
         securityContext:
           privileged: true
@@ -291,7 +291,7 @@ spec:
         - configMapRef:
             name: env
       - name: contrail-analytics-collector
-        image: "localhost:5000/contrail-analytics-collector:4.0.1.0-32"
+        image: "{{contrail_docker_repository}}/contrail-analytics-collector:{{contrail_version}}"
         imagePullPolicy: ""
         envFrom:
         - configMapRef:
@@ -299,7 +299,7 @@ spec:
         securityContext:
           privileged: true
       - name: contrail-analytics-alarm-gen
-        image: "localhost:5000/contrail-analytics-alarm-gen:4.0.1.0-32"
+        image: "{{contrail_docker_repository}}/contrail-analytics-alarm-gen:{{contrail_version}}"
         imagePullPolicy: ""
         envFrom:
         - configMapRef:
@@ -307,7 +307,7 @@ spec:
         securityContext:
           privileged: true
       - name: contrail-analytics-query-engine
-        image: "localhost:5000/contrail-analytics-query-engine:4.0.1.0-32"
+        image: "{{contrail_docker_repository}}/contrail-analytics-query-engine:{{contrail_version}}"
         imagePullPolicy: ""
         envFrom:
         - configMapRef:
@@ -315,7 +315,7 @@ spec:
         securityContext:
           privileged: true
       - name: contrail-analytics-snmp-collector
-        image: "localhost:5000/contrail-analytics-snmp-collector:4.0.1.0-32"
+        image: "{{contrail_docker_repository}}/contrail-analytics-snmp-collector:{{contrail_version}}"
         imagePullPolicy: ""
         envFrom:
         - configMapRef:
@@ -323,7 +323,7 @@ spec:
         securityContext:
           privileged: true
       - name: contrail-analytics-topology
-        image: "localhost:5000/contrail-analytics-topology:4.0.1.0-32"
+        image: "{{contrail_docker_repository}}/contrail-analytics-topology:{{contrail_version}}"
         imagePullPolicy: ""
         envFrom:
         - configMapRef:
@@ -363,7 +363,7 @@ spec:
       hostNetwork: true
       containers:
       - name: contrail-controller-control
-        image: "localhost:5000/contrail-controller-control-control:4.0.1.0-32"
+        image: "{{contrail_docker_repository}}/contrail-controller-control-control:{{contrail_version}}"
         imagePullPolicy: ""
         securityContext:
           privileged: true
@@ -371,7 +371,7 @@ spec:
         - configMapRef:
             name: env
       - name: contrail-controller-control-dns
-        image: "localhost:5000/contrail-controller-control-dns:4.0.1.0-32"
+        image: "{{contrail_docker_repository}}/contrail-controller-control-dns:{{contrail_version}}"
         imagePullPolicy: ""
         envFrom:
         - configMapRef:
@@ -379,7 +379,7 @@ spec:
         securityContext:
           privileged: true
       - name: contrail-controller-control-named
-        image: "localhost:5000/contrail-controller-control-named:4.0.1.0-32"
+        image: "{{contrail_docker_repository}}/contrail-controller-control-named:{{contrail_version}}"
         imagePullPolicy: ""
         envFrom:
         - configMapRef:
@@ -419,7 +419,7 @@ spec:
       hostNetwork: true
       containers:
       - name: contrail-controller-config-api
-        image: "localhost:5000/contrail-controller-config-api:4.0.1.0-32"
+        image: "{{contrail_docker_repository}}/contrail-controller-config-api:{{contrail_version}}"
         imagePullPolicy: ""
         securityContext:
           privileged: true
@@ -427,7 +427,7 @@ spec:
         - configMapRef:
             name: env
       - name: contrail-controller-config-devicemgr
-        image: "localhost:5000/contrail-controller-config-devicemgr:4.0.1.0-32"
+        image: "{{contrail_docker_repository}}/contrail-controller-config-devicemgr:{{contrail_version}}"
         imagePullPolicy: ""
         envFrom:
         - configMapRef:
@@ -435,7 +435,7 @@ spec:
         securityContext:
           privileged: true
       - name: contrail-controller-config-schema
-        image: "localhost:5000/contrail-controller-config-schema:4.0.1.0-32"
+        image: "{{contrail_docker_repository}}/contrail-controller-config-schema:{{contrail_version}}"
         imagePullPolicy: ""
         envFrom:
         - configMapRef:
@@ -443,7 +443,7 @@ spec:
         securityContext:
           privileged: true
       - name: contrail-controller-config-svcmonitor
-        image: "localhost:5000/contrail-controller-config-svcmonitor:4.0.1.0-32"
+        image: "{{contrail_docker_repository}}/contrail-controller-config-svcmonitor:{{contrail_version}}"
         imagePullPolicy: ""
         securityContext:
           privileged: true
@@ -483,7 +483,7 @@ spec:
       hostNetwork: true
       containers:
       - name: contrail-controller-webui-job
-        image: "localhost:5000/contrail-controller-webui-job:4.0.1.0-32"
+        image: "{{contrail_docker_repository}}/contrail-controller-webui-job:{{contrail_version}}"
         imagePullPolicy: ""
         securityContext:
           privileged: true
@@ -491,7 +491,7 @@ spec:
         - configMapRef:
             name: env
       - name: contrail-controller-webui-web
-        image: "localhost:5000/contrail-controller-webui-web:4.0.1.0-32"
+        image: "{{contrail_docker_repository}}/contrail-controller-webui-web:{{contrail_version}}"
         imagePullPolicy: ""
         envFrom:
         - configMapRef:
@@ -609,7 +609,7 @@ spec:
       hostNetwork: true
       containers:
       - name: contrail-kube-manager
-        image: "localhost:5000/contrail-kube-manager-ubuntu16.04:4.0.1.0"
+        image: "{{contrail_docker_repository}}/contrail-kube-manager-ubuntu16.04:4.0.1.0"
         imagePullPolicy: ""
         securityContext:
           privileged: true
@@ -666,7 +666,7 @@ spec:
       hostNetwork: true
       initContainers:
       - name: contrail-kubernetes-agent
-        image: "localhost:5000/contrail-kubernetes-agent-ubuntu16.04:4.0.1.0"
+        image: "{{contrail_docker_repository}}/contrail-kubernetes-agent-ubuntu16.04:4.0.1.0"
         imagePullPolicy: ""
         securityContext:
           privileged: true
@@ -683,7 +683,7 @@ spec:
           name: var-log-contrail-cni
       containers:
       - name: contrail-agent
-        image: "localhost:5000/contrail-agent-ubuntu16.04:4.0.1.0"
+        image: "{{contrail_docker_repository}}/contrail-agent-ubuntu16.04:4.0.1.0"
         imagePullPolicy: ""
         securityContext:
           privileged: true

@@ -1,26 +1,29 @@
 #!/bin/bash
-version=4.0.1.0-32
-registry=localhost:5000
+version=$(awk -F'=' '$1 ~ /^contrail_version$/ { print $2 }' ../kubernetes/manifest-vars)
+registry=$(awk -F'=' '$1 ~ /^contrail_docker_registry$/ { print $2 }' ../kubernetes/manifest-vars)
 opts=$2
-if [ -z $1 ]; then
+
+echo 'Contrail version: '$version
+echo 'Docker registry: '$registry
+if [ -n "$opts" ]; then
+  echo 'Options: '$opts
+fi
+
+build () {
+  container_name=`echo $1 |cut -d"." -f2|tr "/" "-"`
+  container_name=contrail${container_name}
+  echo 'Building '$container_name
+  docker build --build-arg CONTRAIL_VERSION=${version} --build-arg CONTRAIL_REGISTRY=${registry} ${opts} -t ${registry}/${container_name}:${version} $1
+  docker push ${registry}/${container_name}:${version}
+}
+
+if [ -z $1 ] || [ $1 = 'all' ]; then
   for dir in `find . -type d`
   do
     if [ -f ${dir}/Dockerfile ]; then
-      container_name=`echo $dir |cut -d"." -f2|tr "/" "-"`
-      container_name=contrail${container_name}
-      echo ${container_name}
-      docker build ${opts} -t ${registry}/${container_name}:${version} ${dir}
-      docker push ${registry}/${container_name}:${version}
-      #docker save -o /var/lib/libvirt/images/docker/images/${container_name}-${version}.tar ${container_name}:${version}
+      build $dir
     fi
   done
 else
-  container_name=`echo $1 |cut -d"." -f2|tr "/" "-"`
-  container_name=contrail${container_name}
-  echo ${opts}
-  echo ${container_name}
-  echo ${version}
-  docker build ${opts} -t ${registry}/${container_name}:${version} $1
-  docker push ${registry}/${container_name}:${version}
-  #docker save -o /var/lib/libvirt/images/docker/images/${container_name}-${version}.tar ${container_name}:${version}
+  build $1
 fi

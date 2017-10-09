@@ -1,5 +1,6 @@
-# vim:set ft=dockerfile:
-FROM localhost:5000/contrail-base:4.0.1.0-32
+ARG CONTRAIL_VERSION=4.0.1.0-32
+ARG CONTRAIL_REGISTRY=localhost:5000# vim:set ft=dockerfile:
+FROM ${CONTRAIL_REGISTRY}/contrail-base:${CONTRAIL_VERSION}
 
 # explicitly set user/group IDs
 RUN groupadd -r cassandra && useradd -r -g cassandra cassandra

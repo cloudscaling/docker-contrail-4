@@ -1,4 +1,6 @@
-FROM localhost:5000/contrail-controller-config-base:4.0.1.0-32
+ARG CONTRAIL_VERSION=4.0.1.0-32
+ARG CONTRAIL_REGISTRY=localhost:5000
+FROM privatedocker.localdomain/contrail-controller-config-base:${CONTRAIL_VERSION}
 COPY entrypoint.sh /
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["/usr/bin/python","/usr/bin/contrail-api","--conf_file","/etc/contrail/contrail-api.conf","--conf_file","/etc/contrail/contrail-keystone-auth.conf","--worker_id","0"]

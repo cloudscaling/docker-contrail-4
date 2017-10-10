@@ -41,7 +41,6 @@ curl -o $package_fname $package_url
 
 package_dir=$(mktemp -d)
 pushd $package_dir
-echo $package_dir
 rpm2cpio $package_fname | cpio -idmv
 popd
 

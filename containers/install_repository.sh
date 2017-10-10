@@ -7,6 +7,7 @@ package_root_dir="/var/www"
 
 sudo -u root /bin/bash << EOS
 
+apt-get update
 apt-get install -y lighttpd rpm2cpio
 ln -s /etc/lighttpd/conf-available/10-dir-listing.conf /etc/lighttpd/conf-enabled/
 sed -i 's#\(server.document-root\)[ \t]*=.*#\1 = "'$package_root_dir'"#' /etc/lighttpd/lighttpd.conf
@@ -36,7 +37,7 @@ fi
 
 package_fname=$(mktemp)
 echo Getting $package_url to $package_fname
-curl -o /tmp/contrail.packages.rpm $package_url
+curl -o $package_fname $package_url
 
 package_dir=$(mktemp -d)
 pushd $package_dir

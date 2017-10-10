@@ -9,7 +9,7 @@ sudo -u root /bin/bash << EOS
 
 apt-get install -y lighttpd rpm2cpio
 ln -s /etc/lighttpd/conf-available/10-dir-listing.conf /etc/lighttpd/conf-enabled/
-sed -i "s#\(server.document-root\)[ \t]*=.*#\1 = "$package_root_dir"#" /etc/lighttpd/lighttpd.conf
+sed -i 's#\(server.document-root\)[ \t]*=.*#\1 = "'$package_root_dir'"#' /etc/lighttpd/lighttpd.conf
 service lighttpd restart
 chown -R $OUSER /var/www
 chgrp -R $OGROUP /var/www

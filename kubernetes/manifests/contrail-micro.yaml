@@ -627,6 +627,8 @@ spec:
             path: global.conf
           - key: kubemanager-config
             path: kubemanager.conf
+          - key: kubernetes-agent-config
+            path: kubernetesagent.conf
       - name: pod-secret
         secret:
           secretName: contrail-kube-manager-token

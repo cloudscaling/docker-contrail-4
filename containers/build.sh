@@ -1,7 +1,7 @@
 #!/bin/bash
 DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
-source "$DIR/parse_env.sh"
+source "$DIR/parse-env.sh"
 
 opts=$2
 

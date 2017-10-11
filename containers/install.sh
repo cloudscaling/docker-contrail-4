@@ -1,7 +1,7 @@
 #!/bin/bash
 DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
-source "$DIR/parse_env.sh"
+source "$DIR/parse-env.sh"
 
 echo 'Contrail version: '$version
 echo 'Contrail registry: '$registry
@@ -11,6 +11,6 @@ CONTRAIL_VERSION=$version
 CONTRAIL_REGISTRY=$registry
 CONTRAIL_REPOSITORY=$repository
 
-source "$DIR/install_repository.sh"
-source "$DIR/validate_docker.sh"
-source "$DIR/install_registry.sh"
+source "$DIR/install-repository.sh"
+$DIR/validate-docker.sh
+source "$DIR/install-registry.sh"

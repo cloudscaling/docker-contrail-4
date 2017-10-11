@@ -13,5 +13,5 @@ sudo docker run -d --restart=always --name registry \
 
 DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
-source "$DIR/config_docker.sh"
+source "$DIR/config-docker.sh"
 

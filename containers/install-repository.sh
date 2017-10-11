@@ -23,7 +23,7 @@ s3_bucket_url="https://s3-us-west-2.amazonaws.com/contrailrhel7"
 
 for os_version in ${os_versions[@]}:
 do
-  package_url=$s3_bucket_url'/contrail-install-packages-$contrail_version~$os_version.el7.noarch.rpm'
+  package_url=$s3_bucket_url'/contrail-install-packages-'$contrail_version'~'$os_version'.el7.noarch.rpm'
   http_status=$(curl -Isw "%{http_code}" -o /dev/null $package_url)
   if [ $http_status == "200" ]; then
     break
@@ -31,7 +31,7 @@ do
 done
 
 if [ $http_status != "200" ]; then
-  echo No Contrail packages found for version $contrail_version
+  echo 'No Contrail packages found for version '$contrail_version
   exit
 fi
 
@@ -46,14 +46,13 @@ popd
 
 if [ -n $CONTRAIL_REPOSITORY ]; then
   dir_prefix=$(echo $CONTRAIL_REPOSITORY | awk -F'/' '{print $4}' | sed 's/'$version'$//')
-else
-  repo_dir=$package_root_dir'/'$dir_prefix$contrail_version
 fi
+repo_dir=$package_root_dir'/'$dir_prefix$contrail_version
 if [ -d $repo_dir ]; then
-  echo Remove existing packages in $repo_dir
+  echo 'Remove existing packages in '$repo_dir
   rm -rf $repo_dir
 fi
-echo Extract packages to $repo_dir
+echo 'Extract packages to '$repo_dir
 mkdir $repo_dir
 tar -xvzf $package_dir'/opt/contrail/contrail_packages/contrail_rpms.tgz' -C $repo_dir
 

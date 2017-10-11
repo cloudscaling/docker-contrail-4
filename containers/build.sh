@@ -1,20 +1,29 @@
 #!/bin/bash
-version=$(awk -F'=' '$1 ~ /^contrail_version$/ { print $2 }' ../kubernetes/manifest-vars)
-registry=$(awk -F'=' '$1 ~ /^contrail_docker_registry$/ { print $2 }' ../kubernetes/manifest-vars)
+DIR="${BASH_SOURCE%/*}"
+if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
+source "$DIR/parse_env.sh"
+
 opts=$2
 
 echo 'Contrail version: '$version
-echo 'Docker registry: '$registry
+echo 'Contrail registry: '$registry
+echo 'Contrail repository: '$repository
 if [ -n "$opts" ]; then
   echo 'Options: '$opts
 fi
 
+exit
+
 build () {
-  container_name=`echo $1 |cut -d"." -f2|tr "/" "-"`
-  container_name=contrail${container_name}
+  local container_name=`echo $1 | cut -d"." -f2 | tr "/" "-"`
+  local container_name=contrail${container_name}
   echo 'Building '$container_name
-  docker build --build-arg CONTRAIL_VERSION=${version} --build-arg CONTRAIL_REGISTRY=${registry} ${opts} -t ${registry}/${container_name}:${version} $1
-  docker push ${registry}/${container_name}:${version}
+  docker build -t ${registry}'/'${container_name}:${version} \
+    --build-arg CONTRAIL_VERSION=${version} \
+    --build-arg CONTRAIL_REGISTRY=${registry} \
+    --build-arg REPO_URL=${repo_url} \
+    ${opts} $1
+  docker push ${registry}'/'${container_name}:${version}
 }
 
 if [ -z $1 ] || [ $1 = 'all' ]; then

@@ -12,8 +12,6 @@ if [ -n "$opts" ]; then
   echo 'Options: '$opts
 fi
 
-exit
-
 build () {
   local container_name=`echo $1 | cut -d"." -f2 | tr "/" "-"`
   local container_name=contrail${container_name}
@@ -21,7 +19,7 @@ build () {
   docker build -t ${registry}'/'${container_name}:${version} \
     --build-arg CONTRAIL_VERSION=${version} \
     --build-arg CONTRAIL_REGISTRY=${registry} \
-    --build-arg REPO_URL=${repo_url} \
+    --build-arg REPO_URL=${repository} \
     ${opts} $1
   docker push ${registry}'/'${container_name}:${version}
 }

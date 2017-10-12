@@ -20,7 +20,7 @@ if [ $host_ip == 'auto' ]; then
   host_ip=`ip address show dev $default_interface | head -3 | tail -1 | tr "/" " " | awk '{print $2}'`
 fi
 
-config_nodes=${CONFIG_NODES:-$host_ip}}
+config_nodes=${CONFIG_NODES:-$host_ip}
 controller_nodes=${CONTROLLER_NODES:-$host_ip}
 analytics_nodes=${ANALYTICS_NODES:-$host_ip}
 analyticsdb_nodes=${ANALYTICSDB_NODES:-$host_ip}

@@ -27,5 +27,5 @@ EOS
 
 DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
-source "$DIR/../containers/parse-env.sh"
+source "$DIR/parse-env.sh"
 source "$DIR/../containers/config-docker.sh"

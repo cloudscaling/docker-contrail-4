@@ -8,7 +8,7 @@ containers=(
 
 DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
-source "$DIR/parse-env.sh"
+source "$DIR/../parse-env.sh"
 
 for cnt in ${containers[@]}; do
   docker pull $cnt

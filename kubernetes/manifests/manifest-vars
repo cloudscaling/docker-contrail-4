@@ -4,6 +4,6 @@ analytics_nodes={{single_ip}}
 analyticsdb_nodes={{single_ip}}
 api_server={{single_ip}}
 
-single_ip=172.31.29.208
-contrail_docker_registry=172.31.69.187
+single_ip=172.31.23.95
+contrail_docker_registry=172.31.79.71:5000
 contrail_version=4.0.1.0-32

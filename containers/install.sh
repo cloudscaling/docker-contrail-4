@@ -1,7 +1,7 @@
 #!/bin/bash
 DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
-source "$DIR/parse-env.sh"
+source "$DIR/../parse-env.sh"
 
 echo 'Contrail version: '$version
 echo 'Contrail registry: '$registry

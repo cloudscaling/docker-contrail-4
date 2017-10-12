@@ -1,7 +1,7 @@
 #!/bin/bash
-DIR="${BASH_SOURCE%/*}"
+containers_dir="${BASH_SOURCE%/*}"
 if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
-source "$DIR/../parse-env.sh"
+source "$containers_dir/../parse-env.sh"
 
 opts=$2
 
@@ -29,7 +29,7 @@ build () {
   docker build -t ${registry}'/'${container_name}:${version} \
     --build-arg CONTRAIL_VERSION=${version} \
     --build-arg CONTRAIL_REGISTRY=${registry} \
-    --build-arg REPO_URL=${repository} \
+    --build-arg REPOSITORY=${repository} \
     ${opts} $dir |& tee $logfile
   if [ ${PIPESTATUS[0]} -eq 0 ]; then
     docker push ${registry}'/'${container_name}:${version} |& tee -a $logfile
@@ -43,7 +43,7 @@ build () {
 }
 
 if [ -z $1 ] || [ $1 = 'all' ]; then
-  for dir in $(find $DIR -type d); do
+  for dir in $(find $containers_dir -type d); do
     if [[ $dir != *base ]]; then
       build $dir
     fi

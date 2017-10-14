@@ -46,6 +46,18 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
+  name: nodemgr-config
+  namespace: kube-system
+data:
+  DOCKER_HOST: "unix://mnt/docker.sock"
+  CONTROLLER_NODES: 10.0.2.15
+# DEBUG is used to wait in entrypoint.sh till a file /go appear in container
+# it allows to replace nodemgr code in container and debug it, see nodemgr/entrypoint.sh
+  DEBUG: "true"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
   name: contrail-analyticsdb-config
   namespace: kube-system
 data:
@@ -56,7 +68,7 @@ data:
   JVM_EXTRA_OPTS: >-
     -Dcassandra.rpc_port=9160
     -Dcassandra.native_transport_port=9042
-    -Dcassandra.ssl_storage_port=7001 
+    -Dcassandra.ssl_storage_port=7001
     -Dcassandra.storage_port=7000
 ---
 apiVersion: v1
@@ -72,7 +84,7 @@ data:
   JVM_EXTRA_OPTS: >-
     -Dcassandra.rpc_port=9161
     -Dcassandra.native_transport_port=9041
-    -Dcassandra.ssl_storage_port=7011 
+    -Dcassandra.ssl_storage_port=7011
     -Dcassandra.storage_port=7010
     -Dcassandra.jmx.local.port=7200
 ---
@@ -198,14 +210,14 @@ spec:
           privileged: true
         envFrom:
         - configMapRef:
-            name: contrail-analyticsdb-config 
+            name: contrail-analyticsdb-config
         volumeMounts:
         - mountPath: /var/lib/cassandra
           name: analyticsdb-data
       volumes:
       - name: analyticsdb-data
         hostPath:
-          path: /var/lib/analyticsdb 
+          path: /var/lib/analyticsdb
 ---
 apiVersion: extensions/v1beta1
 kind: DaemonSet
@@ -245,14 +257,14 @@ spec:
           privileged: true
         envFrom:
         - configMapRef:
-            name: contrail-configdb-config 
+            name: contrail-configdb-config
         volumeMounts:
         - mountPath: /var/lib/cassandra
           name: configdb-data
       volumes:
       - name: configdb-data
         hostPath:
-          path: /var/lib/configdb 
+          path: /var/lib/configdb
 ---
 apiVersion: extensions/v1beta1
 kind: DaemonSet
@@ -453,6 +465,26 @@ spec:
         envFrom:
         - configMapRef:
             name: env
+      - name: contrail-controller-config-nodemgr
+        image: "localhost:5000/contrail-controller-config-nodemgr:4.0.1.0-32"
+        imagePullPolicy: ""
+        envFrom:
+        - configMapRef:
+            name: nodemgr-config
+        securityContext:
+          privileged: true
+# todo: there is type Socket in new kubernetes, it is possible to use full
+# path:
+# hostPath:
+#   path: /var/run/docker.sock and
+#   type: Socket
+        volumeMounts:
+        - mountPath: /mnt
+          name: docker-unix-socket
+      volumes:
+      - name: docker-unix-socket
+        hostPath:
+          path: /var/run
 ---
 apiVersion: extensions/v1beta1
 kind: DaemonSet
@@ -779,6 +811,6 @@ kind: Secret
 metadata:
   name: contrail-kube-manager-token
   namespace: kube-system
-  annotations: 
+  annotations:
     kubernetes.io/service-account.name: contrail-kube-manager
 type: kubernetes.io/service-account-token

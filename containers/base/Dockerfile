@@ -7,7 +7,7 @@ RUN yum update -y && yum install -y \
     yum-plugin-priorities \
     http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-10.noarch.rpm \
     https://repos.fedorapeople.org/repos/openstack/openstack-newton/rdo-release-newton-5.noarch.rpm \
-  && yum install -y iproute \
+  && yum install -y iproute less \
     contrail-lib contrail-nodemgr contrail-setup contrail-utils python-contrail \
   && yum clean all
 

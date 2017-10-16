@@ -17,8 +17,12 @@ Now it's checked with CentOS containers only, however host system can be Ubuntu 
 
 * Bring up your local docker repo on localhost:5000 (or change the files later for other location)
 
+  You can find a guide here: https://docs.docker.com/registry/deploying/
+
 * Bring up http server and make Contrail rpm packages accessible by http (http://10.0.2.15/contrail-4.0.1.0-32 in current code)
 
+  You can use microhttpd on Ubuntu (```apt-get install microhttpd```) or httpd (```yum install  -y httpd; chkconfig httpd on; service httpd start```) on Redhat. For   microhttpd use /var/www/ to put Contrail packages, for httpd use /var/www/html/.
+  
 * Use change_contrail_version.sh to update version before build (e.g., ```change_contrail_version.sh 4.0.1.0-32 4.0.1.0-33```
 
 * Change IP 10.0.2.15 everywhere to IP of your repo URLs and to (another) IP of your controller nodes, 

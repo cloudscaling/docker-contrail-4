@@ -16,12 +16,14 @@ server_index=1
 IFS=',' read -ra server_list <<< "${ZOOKEEPER_NODES}"
 for server in "${server_list[@]}"; do
   zk_server_list+=${server}:2181,
+  zk_chroot_list+=${server}:2181/kafka-root,
   if [ ${default_ip_address} == $server ]; then
     my_index=$server_index
   fi
   server_index=$((server_index+1))
 done
-zk_list="${zk_server_list::-1}"
+bin/zookeeper-shell.sh "${zk_server_list::-1}" <<< "create /kafka-root []"
+zk_list="${zk_chroot_list::-1}"
 if [ `echo ${#server_list[@]}` -gt 1 ];then
   replication_factor=2
 else
@@ -40,7 +42,7 @@ KAFKA_delete_topic_enable=${KAFKA_delete_topic_enable:-true}
 sed -i "s/^#log.retention.bytes=.*$/log.retention.bytes=$KAFKA_log_retention_bytes/g" ${CONFIG}
 sed -i "s/^log.segment.bytes=.*$/log.retention.bytes=$KAFKA_log_segment_bytes/g" ${CONFIG}
 sed -i "s/^log.retention.hours=.*$/log.retention.hours=$KAFKA_log_retention_hours/g" ${CONFIG}
-sed -i "s/^zookeeper.connect=.*$/zookeeper.connect=$zk_list/g" ${CONFIG}
+sed -i "s)^zookeeper.connect=.*$)zookeeper.connect=$zk_list)g" ${CONFIG}
 sed -i "s/^num.partitions=.*$/num.partitions=30/g" ${CONFIG}
 sed -i "s/^num.partitions=.*$/num.partitions=30/g" ${CONFIG}
 sed -i "s/^broker.id=.*$/broker.id=$KAFKA_BROKER_ID/g" ${CONFIG}

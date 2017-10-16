@@ -36,7 +36,8 @@ Now it's checked with CentOS containers only, however host system can be Ubuntu 
 
 * Build the containers again (only base ones will be built during first iteration)
 
-* You can check your built containers in http://localhost:5000/v2/_catalog (or where your repo is)
+* You can check your built containers in http://localhost:5000/v2/_catalog (or where your repo is).
+  There should be 34 contrail-* containers in this repo.
 
 * Do not forget to adjust your configuration in kubernetes/manifests/contrail-micro.yaml
 

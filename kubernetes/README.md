@@ -9,7 +9,7 @@ Now it's checked with CentOS containers only, however host system can be Ubuntu 
   
   https://github.com/Juniper/contrail-docker/wiki/Provision-Contrail-CNI-for-Kubernetes
   
-  Stop before deploying Contrail (kubectl apply -f contrail-host-ubuntu.yaml)
+  Stop before deploying Contrail ("Steps to provision Contrail" section)
   
 * Clone this repo:
   

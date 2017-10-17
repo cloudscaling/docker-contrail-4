@@ -3,17 +3,11 @@ containers_dir="${BASH_SOURCE%/*}"
 if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 source "$containers_dir/../parse-env.sh"
 
-container_version=$version
-subver=$2
-opts=$3
+opts=$2
 
 echo 'Contrail version: '$version
 echo 'Contrail registry: '$registry
 echo 'Contrail repository: '$repository
-if [ -n "$subver" ]; then
-  container_version=$version'-'$subver
-  echo 'Container version: '$container_version
-fi
 if [ -n "$opts" ]; then
   echo 'Options: '$opts
 fi
@@ -32,20 +26,17 @@ build () {
   local container_name='contrail'${container_name}
   echo 'Building '$container_name
   local logfile='build-'$container_name'.log'
-  tags="-t ${registry}/${container_name}:${container_version}"
-  if [ -n $subver ]; then
-    tags+=" -t ${registry}/${container_name}:${version}"
-  fi
-  failed=0
-  docker build ${tags} \
+  docker build -t ${registry}'/'${container_name}:${version} \
     --build-arg CONTRAIL_VERSION=${version} \
     --build-arg CONTRAIL_REGISTRY=${registry} \
     --build-arg REPOSITORY=${repository} \
     ${opts} $dir |& tee $logfile
-  state=${PIPESTATUS[0]}
-  test $state -eq 0 && docker push ${registry}'/'${container_name}:${container_version} |& tee -a $logfile && state=${PIPESTATUS[0]}
-  test $state -eq 0 && docker push ${registry}'/'${container_name}:${version} |& tee -a $logfile && state=${PIPESTATUS[0]}
-  test $state -eq 0 && rm $logfile
+  if [ ${PIPESTATUS[0]} -eq 0 ]; then
+    docker push ${registry}'/'${container_name}:${version} |& tee -a $logfile
+    if [ ${PIPESTATUS[0]} -eq 0 ]; then
+      rm $logfile
+    fi
+  fi
   if [ -f $logfile ]; then
     was_errors=1
   fi

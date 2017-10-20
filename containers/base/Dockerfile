@@ -8,4 +8,7 @@ RUN yum install -y https://repos.fedorapeople.org/repos/openstack/openstack-newt
 RUN yum install -y contrail-lib contrail-nodemgr contrail-setup contrail-utils python-contrail
 RUN yum install -y iproute
 
+COPY functions.sh /
+COPY common.sh /
+
 CMD ["/usr/bin/tail","-f","/dev/null"]

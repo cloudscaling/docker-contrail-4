@@ -25,7 +25,6 @@ build () {
   local container_name=`echo ${dir#"./"} | tr "/" "-" | sed 's/\(.*\)-$/\1/'`
   local container_name='contrail-'${container_name}
   echo 'Building '$container_name
-  return
   local logfile='build-'$container_name'.log'
   docker build -t ${registry}'/'${container_name}:${version} \
     --build-arg CONTRAIL_VERSION=${version} \

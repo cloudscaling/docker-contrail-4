@@ -118,7 +118,7 @@ config.files = {};
 config.files.download_path = '/tmp';
 
 config.cassandra = {};
-config.cassandra.server_ips = ${cassandra_server_ips:-`get_server_json_list CASSANDRA`};
+config.cassandra.server_ips = ${cassandra_server_ips:-`get_server_json_list CONFIGDB`};
 config.cassandra.server_port = ${cassandra_server_port:-"'"$CONFIGDB_CQL_PORT"'"};
 config.cassandra.enable_edit = ${cassandra_enable_edi:-false};
 

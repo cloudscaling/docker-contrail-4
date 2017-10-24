@@ -1,94 +1,50 @@
 #!/bin/bash
 
-CONTROLLER_NODES=${CONTROLLER_NODES:-`hostname`}
-ANALYTICS_NODES=${ANALYTICS_NODES:-${CONTROLLER_NODES}}
-ZOOKEEPER_NODES=${ZOOKEEPER_NODES:-${CONTROLLER_NODES}}
-CONFIG_NODES=${CONFIG_NODES:-${CONTROLLER_NODES}}
-CASSANDRA_NODES=${CASSANDRA_NODES:-${CONTROLLER_NODES}}
-RABBITMQ_NODES=${RABBITMQ_NODES:-${CONTROLLER_NODES}}
-REDIS_NODES=${REDIS_NODES:-${CONTROLLER_NODES}}
-KAFKA_NODES=${KAFKA_NODES:-${CONTROLLER_NODES}}
+source /common.sh
 
-function get_listen_ip(){
-  default_interface=`ip route show |grep "default via" |awk '{print $5}'`
-  default_ip_address=`ip address show dev $default_interface |\
-                    head -3 |tail -1 |tr "/" " " |awk '{print $2}'`
-  echo ${default_ip_address}
-}
-
-function get_server_list(){
-  server_typ=$1_NODES
-  port=$2
-  server_list=''
-  IFS=',' read -ra server_list <<< "${!server_typ}"
-  for server in "${server_list[@]}"; do
-    server_address=`echo ${server}`
-    extended_server_list+=${server_address}:${port}
-  done
-  extended_list="${extended_server_list::-1}"
-  echo ${extended_list}
-}
-
-CASSANDRA_PORT=${ANALYTICS_cassandra_port:-9042}
-ZOOKEEPER_PORT=${CONFIG_zookeeoer_port:-2181}
-ANALYTICS_COLLECTOR_PORT=${ANALYTCS_COLLECTOR_analytics_port:-8086}
-ANALYTICS_API_HTTP_PORT=${ANALYTCS_API_http_port:-8090}
-ANALYTICS_API_REST_API_PORT=${ANALYTCS_API_rest_api_port:-8081}
-RABBITMQ_PORT=${CONFIG__rabbit_port:-5672}
-REDIS_PORT=${ANALYTICS_redis_port:-6379}
-REDIS_QUERY_PORT=${ANALYTICS_redis_port:-6379}
-KAFKA_PORT=${COLLECTOR_kafka_port:-9092}
-CONFIG_PORT=${COLLECTOR_config_port:-8082}
-
-read -r -d '' collector_config << EOM
+cat > /etc/contrail/contrail-collector.conf << EOM
 [DEFAULT]
-analytics_data_ttl=${COLLECTOR_analytics_data_ttl:-48}
-analytics_config_audit_ttl=${COLLECTOR_analytics_config_audit_ttl:-2160}
-analytics_statistics_ttl=${COLLECTOR_analytics_statistics_ttl:-168}
-analytics_flow_ttl=${COLLECTOR_analytics_flow_ttl:-2}
-
-cassandra_server_list=${COLLECTOR_cassandra_server_list:-`get_server_list CASSANDRA "$CASSANDRA_PORT "`}
-kafka_broker_list=${COLLECTOR_broker_broker_list:-`get_server_list KAFKA "$KAFKA_PORT "`}
-zookeeper_server_list=${COLLECTOR_zookeeper_server_list:-`get_server_list ZOOKEEPER "$ZOOKEEPER_PORT,"`}
-partitions=${COLLECTOR_partitions:-30}
-
-hostip=${COLLECTOR_host_ip:-`get_listen_ip`}
+analytics_data_ttl=${ANALYTICS_DATA_TTL:-48}
+analytics_config_audit_ttl=${ANALYTICS_CONFIG_AUDIT_TTL:-2160}
+analytics_statistics_ttl=${ANALYTICS_STATISTICS_TTL:-168}
+analytics_flow_ttl=${ANALYTICS_FLOW_TTL:-2}
+partitions=${ANALYTICS_UVE_PARTITIONS:-30}
+hostip=${COLLECTOR_LISTEN_IP:-`get_listen_ip`}
 # hostname= # Retrieved from gethostname() or `hostname -s` equivalent
-http_server_port=${COLLECTOR_http_server_port:-8089}
+http_server_port=${COLLECTOR_INTROSPECT_LISTEN_PORT:-$COLLECTOR_LISTEN_PORT}
+syslog_port=${COLLECTOR_SYSLOG_LISTEN_PORT:-$COLLECTOR_SYSLOG_PORT}
+sflow_port=${COLLECTOR_SFLOW_LISTEN_PORT:-$COLLECTOR_SFLOW_PORT}
+ipfix_port=${COLLECTOR_IPFIX_LISTEN_PORT:-$COLLECTOR_IPFIX_PORT}
 # log_category=
-log_file=${COLLECTOR_log_file:-/var/log/contrail/contrail-collector.log}
-log_files_count=${COLLECTOR_log_files_count:-10}
-log_file_size=${COLLECTOR_log_file_size:-1048576}
-log_level=${COLLECTOR_log_level:-SYS_NOTICE}
-log_local=${COLLECTOR_log_local:-1}
-syslog_port=${COLLECTOR_syslog_port:-514}
-sflow_port=${COLLECTOR_sflow_port:-6343}
-ipfix_port=${COLLECTOR_:-4739}
+log_file=${COLLECTOR_LOG_FILE:-"$LOG_DIR/contrail-collector.log"}
+log_files_count=${COLLECTOR_LOG_FILE_COUNT:-10}
+log_file_size=${COLLECTOR_LOG_FILE_SIZ:-1048576}
+log_level=${COLLECTOR_LOG_LEVLE:-$LOG_LEVEL}
+log_local=${COLLECTOR_LOG_LOCAL:-$LOG_LOCAL}
 # sandesh_send_rate_limit=
+cassandra_server_list=$ANALYTICSDB_SERVERS
+kafka_broker_list=$KAFKA_SERVERS
+zookeeper_server_list=$ZOOKEEPER_SERVERS
 
 [COLLECTOR]
-port=${COLLECTOR_port:-8086}
-server=${COLLECTOR_server:-0.0.0.0}
-protobuf_port=${COLLECTOR_protobuf_port:-3333}
+port=${COLLECTOR_LISTEN_PORT:-$COLLECTOR_PORT}
+server=${COLLECTOR_SERVER_LISTEN_IP:-0.0.0.0}
+protobuf_port=${COLLECTOR_PROTOBUF_LISTEN_PORT:-$COLLECTOR_PROTOBUF_PORT}
 
 [STRUCTURED_SYSLOG_COLLECTOR]
 # TCP & UDP port to listen on for receiving structured syslog messages
-port=${COLLECTOR_SYSLOG_port:-3514}
-
+port=${COLLECTOR_STRUCTURED_SYSLOG_LISTENING_PORT:-COLLECTOR_STRUCTURED_SYSLOG_PORT}
 # List of external syslog receivers to forward structured syslog messages in ip:port format separated by space
 # tcp_forward_destination=10.213.17.53:514
-
-kafka_broker_list=${COLLECTOR_broker_broker_list:-`get_server_list KAFKA "$KAFKA_PORT "`}
-
-kafka_topic=${COLLECTOR_kafka_topic:-structured_syslog_topic}
-
+kafka_broker_list=$KAFKA_SERVERS
+kafka_topic=${KAFKA_TOPIC:-'structured_syslog_topic'}
 # number of kafka partitions
-kafka_partitions=${COLLECTOR_kafka_partitions:-30}
+kafka_partitions=${KAFKA_PARTITIONS:-30}
 
 [API_SERVER]
 # List of api-servers in ip:port format separated by space
-api_server_list=${COLLECTOR_api_server_list:-`get_server_list CONFIG "$CONFIG_PORT "`}
-api_server_use_ssl=${COLLECTOR_api_server_use_ssl:-False}
+api_server_list=$ONFIG_SERVERS
+api_server_use_ssl=${CONFIG_API_USE_SSL:-False}
 
 [DATABASE]
 # disk usage percentage
@@ -118,56 +74,13 @@ low_watermark2.message_severity_level=${COLLECTOR_low_watermark2_message_severit
 [REDIS]
 # Port to connect to for communicating with redis-server
 #port=${COLLECTOR_REDIS_port:-6379}
-
 # IP address of redis-server
-server=${COLLECTOR_REDIS_server:-127.0.0.1}
+server=$REDIS_SERVER_IP
 
-[SANDESH]
-sandesh_ssl_enable=${ANALYTICS_sandesh_ssl_enable:-False}
-introspect_ssl_enable=${ANALYTICS_introspect_ssl_enable:-False}
-sandesh_keyfile=${ANALYTICS_sandesh_keyfile:-/etc/contrail/ssl/private/server-privkey.pem}
-sandesh_certfile=${ANALYTICS_sandesh_certfile:-/etc/contrail/ssl/certs/server.pem}
-sandesh_ca_cert=${ANALYTICS_sandesh_ca_cert:-/etc/contrail/ssl/certs/ca-cert.pem}
+$sandesh_client_config
 EOM
 
-read -r -d '' contrail_keystone_auth_config << EOM
-[KEYSTONE]
-admin_password = PQWmBFprabzGZz7rAZyxXQXYb
-admin_tenant_name = admin
-admin_token = eDmvqUxPGrt7qp2YX67MtfF7T
-admin_user = admin
-auth_host = 192.168.24.12
-auth_port = 35357
-auth_protocol = http
-insecure = false
-memcached_servers = 127.0.0.1:12111
-EOM
+set_third_party_auth_config
+set_vnc_api_lib_ini
 
-read -r -d '' vnc_api_lib_config << EOM
-[global]
-;WEB_SERVER = 127.0.0.1
-;WEB_PORT = 9696  ; connection through quantum plugin
-
-WEB_SERVER = 127.0.0.1
-WEB_PORT = ${CONFIG_api_server_port:-8082}
-BASE_URL = /
-;BASE_URL = /tenants/infra ; common-prefix for all URLs
-
-; Authentication settings (optional)
-[auth]
-;AUTHN_TYPE = keystone
-;AUTHN_PROTOCOL = http
-;AUTHN_SERVER = 127.0.0.1
-AUTHN_SERVER = ${CONFIG_AUTHN_SERVER:-""}
-;AUTHN_PORT = 35357
-;AUTHN_URL = /v2.0/tokens
-;AUTHN_TOKEN_URL = http://127.0.0.1:35357/v2.0/tokens
-EOM
-
-#get_kv
-echo "$collector_config" > /etc/contrail/contrail-collector.conf
-if [ $CONFIG_API_auth="keystone" ]; then
-  echo "$contrail_keystone_auth_config" > /etc/contrail/contrail-keystone-auth.conf
-fi
-echo "$vnc_api_lib_config" > /etc/contrail/vnc_api_lib.ini
 exec "$@"

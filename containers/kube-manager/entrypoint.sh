@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source /common.sh
+
 if [ $K8S_TOKEN_FILE ]; then
   K8S_TOKEN=$(cat $K8S_TOKEN_FILE)
 fi

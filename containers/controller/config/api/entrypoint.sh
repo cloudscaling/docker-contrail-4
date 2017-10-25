@@ -6,6 +6,7 @@ cat > /etc/contrail/contrail-api.conf << EOM
 [DEFAULTS]
 listen_ip_addr=${CONFIG_API_LISTEN_ADDRESS:-0.0.0.0}
 listen_port=${CONFIG_API_LISTEN_PORT:-$CONFIG_API_PORT}
+http_server_port=${CONFIG_API_INTROSPECT_LISTEN_PORT:-$CONFIG_API_INTROSPECT_PORT}
 log_file=${CONFIG_API_LOG_FILE:-"$LOG_DIR/contrail-api.log"}
 log_level=${CONFIG_API_LOG_LEVEL:-$LOG_LEVEL}
 list_optimization_enabled=${CONFIG_API_LIST_OPTIMIZATION_ENABLED:-True}

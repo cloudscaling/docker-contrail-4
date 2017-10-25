@@ -1,6 +1,19 @@
 #!/bin/bash
 
-hash docker 2>/dev/null || sudo apt-get install -y docker.io
+linux=$(awk -F"=" '/^ID=/{print $2}' /etc/os-release | tr -d '"')
+
+function install_docker () {
+  case "${linux}" in
+    "ubuntu" )
+      sudo apt-get install -y docker.io
+      ;;
+    "centos" | "rhel" )
+      sudo yum install -y docker
+      ;;
+  esac
+}
+
+hash docker 2>/dev/null || install_docker
 
 docker_ver=$(docker -v | awk -F' ' '{print $3}')
 

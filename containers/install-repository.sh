@@ -4,12 +4,23 @@ export OUSER=$(id -u)
 export OGROUP=$(id -g)
 
 package_root_dir="/var/www"
+linux=$(awk -F"=" '/^ID=/{print $2}' /etc/os-release | tr -d '"')
 
 sudo -u root /bin/bash << EOS
 
-apt-get update
-apt-get install -y lighttpd rpm2cpio
-ln -s /etc/lighttpd/conf-available/10-dir-listing.conf /etc/lighttpd/conf-enabled/
+case "${linux}" in
+  "ubuntu" )
+    apt-get update
+    apt-get install -y lighttpd rpm2cpio
+    ln -s /etc/lighttpd/conf-available/10-dir-listing.conf /etc/lighttpd/conf-enabled/
+    ;;
+  "centos" | "rhel" )
+    # yum install -y epel-release
+    rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+    yum install -y lighttpd
+    sed -i 's/\(dir-listing.activate\)[ \t]*=.*/\1 = "enable"/' /etc/lighttpd/conf.d/dirlisting.conf
+    ;;
+esac
 sed -i 's#\(server.document-root\)[ \t]*=.*#\1 = "'$package_root_dir'"#' /etc/lighttpd/lighttpd.conf
 service lighttpd restart
 chown -R $OUSER /var/www

@@ -44,10 +44,24 @@ CONTROL_PORT=${CONTROL_port:-5269}
 DNS_PORT=${DNS_port:-53}
 
 PHYS_INT=${PHYSICAL_INTERFACE:-`eth0`}
+
+if [[ `ifconfig ${PHYS_INT} |grep "inet "` ]]; then
+  DEFAULT_GATEWAY=''
+  if [[ `ip route show |grep default|grep ${PHYS_INT}` ]]; then
+        DEFAULT_GATEWAY=`ip route show |grep default|grep ${PHYS_INT}|awk '{print $3}'`
+  fi
+  VROUTER_IP=`ifconfig ${PHYS_INT} |grep "inet "|awk '{print $2}'`
+  VROUTER_MASK=`ifconfig ${PHYS_INT} |grep "inet "|awk '{print $4}'`
+  ip address delete $VROUTER_IP/$VROUTER_MASK dev ${PHYS_INT}
+  ip address add $VROUTER_IP/$VROUTER_MASK dev vhost0
+  if [[ $DEFAULT_GATEWAY ]]; then
+    ip route add default via $DEFAULT_GATEWAY
+  fi
+fi
+
+
 VROUTER_HOSTNAME=${VROUTER_HOSTNAME:-`hostname`}
-VROUTER_IP=${VROUTER_IP:-`get_listen_ip`}
-VROUTER_GW=${VROUTER_GW:-`ip route show |grep default|grep ${PHYS_INT}|awk '{print $3}'`}
-DEV_MAC=$(cat /sys/class/net/${PHYS_INT}/address)
+PHYS_INT_MAC=$(cat /sys/class/net/${PHYS_INT}/address)
 
 read -r -d '' contrail_vrouter_agent_config << EOM
 [CONTROL-NODE]
@@ -68,7 +82,7 @@ metadata_proxy_secret=contrail
 
 [VIRTUAL-HOST-INTERFACE]
 name=vhost0
-ip=$VROUTER_IP
+ip=$VROUTER_IP/$VROUTER_MASK
 physical_interface=$PHYS_INT
 gateway=$VROUTER_GW
 
@@ -118,9 +132,9 @@ function insert_vrouter() {
     if [ -f /sys/class/net/pkt3/queues/rx-0/rps_cpus ]; then
         pkt_setup pkt3
     fi
-    vif --create vhost0 --mac $DEV_MAC
-    vif --add ${PHYS_INT} --mac $DEV_MAC --vrf 0 --vhost-phys --type physical
-    vif --add vhost0 --mac $DEV_MAC --vrf 0 --type vhost --xconnect ${PHYS_INT}
+    vif --create vhost0 --mac $PHYS_INT_MAC
+    vif --add ${PHYS_INT} --mac $PHYS_INT_MAC --vrf 0 --vhost-phys --type physical
+    vif --add vhost0 --mac $PHYS_INT_MAC --vrf 0 --type vhost --xconnect ${PHYS_INT}
     ip link set vhost0 up
     return 0
 }
@@ -133,19 +147,10 @@ echo "Inserting vrouter"
 insert_vrouter
 
 echo "Changing physical interface to vhost in ip table"
-if [[ `ifconfig ${PHYS_INT} |grep "inet "` ]]; then
-  def_gw=''
-  if [[ `ip route show |grep default|grep ${PHYS_INT}` ]]; then
-        # TODO: rework - VROUTER_GW definition code is extracted from here 
-        def_gw=$VROUTER_GW
-  fi
-  ip=`ifconfig ${PHYS_INT} |grep "inet "|awk '{print $2}'`
-  mask=`ifconfig ${PHYS_INT} |grep "inet "|awk '{print $4}'`
-  ip address delete $ip/$mask dev ${PHYS_INT}
-  ip address add $ip/$mask dev vhost0
-  if [[ $def_gw ]]; then
-    ip route add default via $def_gw
-  fi
+ip address delete $VROUTER_IP/$VROUTER_MASK dev ${PHYS_INT}
+ip address add $VROUTER_IP/$VROUTER_MASK dev vhost0
+if [[ $DEFAULT_GATEWAY ]]; then
+    ip route add default via $DEFAULT_GATEWAY
 fi
 
 # Prepare agent configs
@@ -154,7 +159,7 @@ echo "$contrail_vrouter_agent_config" > /etc/contrail/contrail-vrouter-agent.con
 echo "$vnc_api_lib_ini" > /etc/contrail/vnc_api_lib.ini
 
 # Prepare default_pmac
-echo $DEV_MAC > /etc/contrail/default_pmac
+echo $PHYS_INT_MAC > /etc/contrail/default_pmac
 
 # Provision vrouter
 echo "Provisioning vrouter"

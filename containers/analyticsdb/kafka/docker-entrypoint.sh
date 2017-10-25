@@ -30,6 +30,8 @@ else
   replication_factor=1
 fi
 KAFKA_BROKER_ID=${my_index:-1}
+KAFKA_PORT=${KAFKA_PORT:-9092}
+KAFKA_LISTEN_PORT=${KAFKA_LISTEN_PORT:-$KAFKA_PORT}
 KAFKA_log_retention_bytes=${KAFKA_log_retention_bytes:-268435456}
 KAFKA_log_segment_bytes=${KAFKA_log_segment_bytes:-268435456}
 KAFKA_log_retention_hours=${KAFKA_log_retention_hours:-24}
@@ -46,7 +48,7 @@ sed -i "s)^zookeeper.connect=.*$)zookeeper.connect=$zk_list)g" ${CONFIG}
 sed -i "s/^num.partitions=.*$/num.partitions=30/g" ${CONFIG}
 sed -i "s/^num.partitions=.*$/num.partitions=30/g" ${CONFIG}
 sed -i "s/^broker.id=.*$/broker.id=$KAFKA_BROKER_ID/g" ${CONFIG}
-sed -i "s/^#advertised.host.name=.*$/advertised.host.name=$KAFKA_LISTEN_ADDRESS/g" ${CONFIG}
+sed -i "s/^listeners=.*$/listeners=PLAINTEXT:\/\/$KAFKA_LISTEN_ADDRESS:$KAFKA_LISTEN_PORT/g" ${CONFIG}
 echo "default.replication.factor=$replication_factor" >> ${CONFIG}
 echo "log.cleanup.policy=${KAFKA_log_cleanup_policy}" >> ${CONFIG}
 echo "log.cleaner.threads=${KAFKA_log_cleaner_threads}" >> ${CONFIG}

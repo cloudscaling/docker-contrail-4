@@ -52,13 +52,12 @@ VROUTER_CIDR=`ip address show ${CUR_INT} |grep "inet "|awk '{print $2}'`
 VROUTER_IP=${VROUTER_CIDR%/*} 
 VROUTER_MASK=${VROUTER_CIDR#*/}
 
-if [[ `ip address show ${PHYS_INT} |grep "inet "` ]]; then
+if [[ `ip address show ${CUR_INT} |grep "inet "` ]]; then
   DEFAULT_GATEWAY=''
   if [[ `ip route show |grep default|grep ${CUR_INT}` ]]; then
         DEFAULT_GATEWAY=`ip route show |grep default|grep ${CUR_INT}|awk '{print $3}'`
   fi
 fi
-
 
 VROUTER_HOSTNAME=${VROUTER_HOSTNAME:-`hostname`}
 PHYS_INT_MAC=$(cat /sys/class/net/${PHYS_INT}/address)
@@ -143,14 +142,16 @@ function insert_vrouter() {
 echo "Modprobing vrouter"
 modprobe vrouter
 
-echo "Inserting vrouter"
-insert_vrouter
+if [[ $CUR_INT != "vhost0" ]]; then
+        echo "Inserting vrouter"
+        insert_vrouter
 
-echo "Changing physical interface to vhost in ip table"
-ip address delete $VROUTER_IP/$VROUTER_MASK dev ${PHYS_INT}
-ip address add $VROUTER_IP/$VROUTER_MASK dev vhost0
-if [[ $DEFAULT_GATEWAY ]]; then
-    ip route add default via $DEFAULT_GATEWAY
+        echo "Changing physical interface to vhost in ip table"
+        ip address delete $VROUTER_IP/$VROUTER_MASK dev ${PHYS_INT}
+        ip address add $VROUTER_IP/$VROUTER_MASK dev vhost0
+        if [[ $DEFAULT_GATEWAY ]]; then
+            ip route add default via $DEFAULT_GATEWAY
+        fi
 fi
 
 # Prepare agent configs

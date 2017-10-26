@@ -45,7 +45,7 @@ DNS_PORT=${DNS_port:-53}
 
 PHYS_INT=${PHYSICAL_INTERFACE:-eth0}
 CUR_INT=$PHYS_INT
-if [[ `ip address show vhost0} |grep "inet "` ]]; then
+if [[ `ip address show vhost0 |grep "inet "` ]]; then
   CUR_INT=vhost0
 fi
 VROUTER_CIDR=`ip address show ${CUR_INT} |grep "inet "|awk '{print $2}'`

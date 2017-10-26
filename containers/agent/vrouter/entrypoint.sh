@@ -45,13 +45,14 @@ DNS_PORT=${DNS_port:-53}
 
 PHYS_INT=${PHYSICAL_INTERFACE:-`eth0`}
 
-if [[ `ifconfig ${PHYS_INT} |grep "inet "` ]]; then
+if [[ `ip address show ${PHYS_INT} |grep "inet "` ]]; then
   DEFAULT_GATEWAY=''
   if [[ `ip route show |grep default|grep ${PHYS_INT}` ]]; then
         DEFAULT_GATEWAY=`ip route show |grep default|grep ${PHYS_INT}|awk '{print $3}'`
   fi
-  VROUTER_IP=`ifconfig ${PHYS_INT} |grep "inet "|awk '{print $2}'`
-  VROUTER_MASK=`ifconfig ${PHYS_INT} |grep "inet "|awk '{print $4}'`
+  cidr=`ip address show ${PHYS_INT} |grep "inet "|awk '{print $2}'`
+  VROUTER_IP=${cidr%/*} 
+  VROUTER_MASK=${cidr#*/}
   ip address delete $VROUTER_IP/$VROUTER_MASK dev ${PHYS_INT}
   ip address add $VROUTER_IP/$VROUTER_MASK dev vhost0
   if [[ $DEFAULT_GATEWAY ]]; then

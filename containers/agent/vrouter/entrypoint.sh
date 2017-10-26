@@ -164,3 +164,5 @@ echo $PHYS_INT_MAC > /etc/contrail/default_pmac
 # Provision vrouter
 echo "Provisioning vrouter"
 /usr/share/contrail-utils/provision_vrouter.py  --api_server_ip $CONTROLLER_NODES --host_name $VROUTER_HOSTNAME --host_ip $VROUTER_IP --oper add
+
+exec "$@"

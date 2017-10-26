@@ -3,6 +3,7 @@ containers_dir="${BASH_SOURCE%/*}"
 if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 source "$containers_dir/../parse-env.sh"
 
+path=$1
 opts=$2
 
 echo 'Contrail version: '$version
@@ -14,15 +15,9 @@ fi
 
 was_errors=0
 
-build () {
-  local dir=$1
-  if [ ! -f ${dir}/Dockerfile ]; then
-    if [ -d ${dir}/base ]; then
-      build ${dir}/base
-    fi
-    return
-  fi
-  local container_name=`echo ${dir#"./"} | tr "/" "-" | sed 's/\(.*\)-$/\1/'`
+build_container () {
+  local dir=${1%/}
+  local container_name=`echo ${dir#"./"} | tr "/" "-"`
   local container_name='contrail-'${container_name}
   echo 'Building '$container_name
   local logfile='build-'$container_name'.log'
@@ -42,15 +37,28 @@ build () {
   fi
 }
 
-if [ -z $1 ] || [ $1 = 'all' ]; then
-  for dir in $(find $containers_dir -type d); do
-    if [[ $dir != *base ]]; then
-      build $dir
+build_dir () {
+  local dir=${1%/}
+  if [ -f ${dir}/Dockerfile ]; then
+    build_container $dir
+    return
+  fi
+  for d in $(ls -d $dir/*/); do
+    if [[ $d == */base* ]]; then
+      build_dir $d
     fi
   done
-  if [ $was_errors -ne 0 ]; then
-    echo 'Failed to build some containers, see log files'
-  fi
-else
-  build $1
+  for d in $(ls -d $dir/*/); do
+    if [[ $d != */base* ]]; then
+      build_dir $d
+    fi
+  done
+}
+
+if [ -z $path ] || [ $path = 'all' ]; then
+  path=$containers_dir
+fi
+build_dir $path
+if [ $was_errors -ne 0 ]; then
+  echo 'Failed to build some containers, see log files'
 fi

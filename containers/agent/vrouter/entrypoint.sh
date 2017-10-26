@@ -43,20 +43,15 @@ CONFIG_PORT=${COLLECTOR_config_port:-8082}
 CONTROL_PORT=${CONTROL_port:-5269}
 DNS_PORT=${DNS_port:-53}
 
-PHYS_INT=${PHYSICAL_INTERFACE:-`eth0`}
+PHYS_INT=${PHYSICAL_INTERFACE:-eth0}
+VROUTER_CIDR=`ip address show ${PHYS_INT} |grep "inet "|awk '{print $2}'`
+VROUTER_IP=${VROUTER_CIDR%/*} 
+VROUTER_MASK=${VROUTER_CIDR#*/}
 
 if [[ `ip address show ${PHYS_INT} |grep "inet "` ]]; then
   DEFAULT_GATEWAY=''
   if [[ `ip route show |grep default|grep ${PHYS_INT}` ]]; then
         DEFAULT_GATEWAY=`ip route show |grep default|grep ${PHYS_INT}|awk '{print $3}'`
-  fi
-  cidr=`ip address show ${PHYS_INT} |grep "inet "|awk '{print $2}'`
-  VROUTER_IP=${cidr%/*} 
-  VROUTER_MASK=${cidr#*/}
-  ip address delete $VROUTER_IP/$VROUTER_MASK dev ${PHYS_INT}
-  ip address add $VROUTER_IP/$VROUTER_MASK dev vhost0
-  if [[ $DEFAULT_GATEWAY ]]; then
-    ip route add default via $DEFAULT_GATEWAY
   fi
 fi
 
@@ -120,7 +115,7 @@ function pkt_setup () {
         fi
         echo $str > $f/rps_cpus
     done
-    ifconfig $1 up
+    ip link set dev $1 up
 }
 
 function insert_vrouter() {
@@ -164,5 +159,4 @@ echo $PHYS_INT_MAC > /etc/contrail/default_pmac
 
 # Provision vrouter
 echo "Provisioning vrouter"
-/usr/share/contrail-utils/provision_vrouter.py  --api_server_ip $CONTROLLER_NODES
-    --host_name $VROUTER_HOSTNAME --host_ip $VROUTER_IP --oper add
+/usr/share/contrail-utils/provision_vrouter.py  --api_server_ip $CONTROLLER_NODES --host_name $VROUTER_HOSTNAME --host_ip $VROUTER_IP --oper add

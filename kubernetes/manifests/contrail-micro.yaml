@@ -50,10 +50,7 @@ metadata:
   namespace: kube-system
 data:
   DOCKER_HOST: "unix://mnt/docker.sock"
-  CONTROLLER_NODES: 10.0.2.15
-# DEBUG is used to wait in entrypoint.sh till a file /go appear in container
-# it allows to replace nodemgr code in container and debug it, see nodemgr/entrypoint.sh
-  DEBUG: "true"
+  CONTROLLER_NODES: {{controller_nodes}}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -466,7 +463,7 @@ spec:
         - configMapRef:
             name: env
       - name: contrail-controller-config-nodemgr
-        image: "localhost:5000/contrail-controller-config-nodemgr:4.0.1.0-32"
+        image: "{{registry}}/contrail-controller-config-nodemgr:{{version}}"
         imagePullPolicy: ""
         envFrom:
         - configMapRef:

@@ -53,9 +53,9 @@ VROUTER_IP=${VROUTER_CIDR%/*}
 VROUTER_MASK=${VROUTER_CIDR#*/}
 
 if [[ `ip address show ${CUR_INT} |grep "inet "` ]]; then
-  DEFAULT_GATEWAY=''
+  VROUTER_GATEWAY=''
   if [[ `ip route show |grep default|grep ${CUR_INT}` ]]; then
-        DEFAULT_GATEWAY=`ip route show |grep default|grep ${CUR_INT}|awk '{print $3}'`
+        VROUTER_GATEWAY=`ip route show |grep default|grep ${CUR_INT}|awk '{print $3}'`
   fi
 fi
 
@@ -76,14 +76,13 @@ log_local=1
 servers=${CONFIG_dns_server_list:-`get_server_list DNS "$DNS_PORT "`}
 
 [METADATA]
-Shared secret for metadata proxy service (Optional)
 metadata_proxy_secret=contrail
 
 [VIRTUAL-HOST-INTERFACE]
 name=vhost0
 ip=$VROUTER_IP/$VROUTER_MASK
 physical_interface=$PHYS_INT
-gateway=$VROUTER_GW
+gateway=$VROUTER_GATEWAY
 
 [SERVICE-INSTANCE]
 netns_command=/usr/bin/opencontrail-vrouter-netns
@@ -149,8 +148,8 @@ if [[ $CUR_INT != "vhost0" ]]; then
         echo "Changing physical interface to vhost in ip table"
         ip address delete $VROUTER_IP/$VROUTER_MASK dev ${PHYS_INT}
         ip address add $VROUTER_IP/$VROUTER_MASK dev vhost0
-        if [[ $DEFAULT_GATEWAY ]]; then
-            ip route add default via $DEFAULT_GATEWAY
+        if [[ $VROUTER_GATEWAY ]]; then
+            ip route add default via $VROUTER_GATEWAY
         fi
 fi
 

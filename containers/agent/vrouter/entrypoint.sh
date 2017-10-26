@@ -44,14 +44,18 @@ CONTROL_PORT=${CONTROL_port:-5269}
 DNS_PORT=${DNS_port:-53}
 
 PHYS_INT=${PHYSICAL_INTERFACE:-eth0}
-VROUTER_CIDR=`ip address show ${PHYS_INT} |grep "inet "|awk '{print $2}'`
+CUR_INT=$PHYS_INT
+if [[ `ip address show vhost0} |grep "inet "` ]]; then
+  CUR_INT=vhost0
+fi
+VROUTER_CIDR=`ip address show ${CUR_INT} |grep "inet "|awk '{print $2}'`
 VROUTER_IP=${VROUTER_CIDR%/*} 
 VROUTER_MASK=${VROUTER_CIDR#*/}
 
 if [[ `ip address show ${PHYS_INT} |grep "inet "` ]]; then
   DEFAULT_GATEWAY=''
-  if [[ `ip route show |grep default|grep ${PHYS_INT}` ]]; then
-        DEFAULT_GATEWAY=`ip route show |grep default|grep ${PHYS_INT}|awk '{print $3}'`
+  if [[ `ip route show |grep default|grep ${CUR_INT}` ]]; then
+        DEFAULT_GATEWAY=`ip route show |grep default|grep ${CUR_INT}|awk '{print $3}'`
   fi
 fi
 

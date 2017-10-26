@@ -5,8 +5,6 @@ source /common.sh
 cat > /etc/contrail/contrail-query-engine.conf << EOM
 [DEFAULT]
 analytics_data_ttl=${ANALYTICS_DATA_TTL:-48}
-cassandra_server_list=$ANALYTICSDB_SERVERS
-collectors=$COLLECTOR_SERVERS
 hostip=${QUERYENGINE_LISTEN_IP:-`get_listen_ip`}
 # hostname= # Retrieved from gethostname() or `hostname -s` equivalent
 http_server_port=${QUERYENGINE_INTROSPECT_LISTEN_PORT:-$QUERYENGINE_INTROSPECT_PORT}
@@ -19,6 +17,8 @@ start_time=${QUERYENGINE_START_TIME:-0}
 # Sandesh send rate limit can be used to throttle system logs transmitted per
 # second. System logs are dropped if the sending rate is exceeded
 # sandesh_send_rate_limit=
+cassandra_server_list=$ANALYTICSDB_CQL_SERVERS
+collectors=$COLLECTOR_SERVERS
 
 [REDIS]
 port=$REDIS_SERVER_PORT

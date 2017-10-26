@@ -14,7 +14,7 @@ collectors=$COLLECTOR_SERVERS
 zookeeper=$ZOOKEEPER_SERVERS
 
 [API_SERVER]
-api_server_list=$ONFIG_SERVERS
+api_server_list=$CONFIG_SERVERS
 api_server_use_ssl=${CONFIG_API_USE_SSL:-False}
 
 $sandesh_client_config

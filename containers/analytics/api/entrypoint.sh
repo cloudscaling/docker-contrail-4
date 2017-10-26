@@ -18,7 +18,7 @@ log_local=${ANALYTICS_API_LOG_LOCAL:-$LOG_LOCAL}
 # second. System logs are dropped if the sending rate is exceeded
 #sandesh_send_rate_limit =
 collectors=$COLLECTOR_SERVERS
-cassandra_server_list=$ANALYTICSDB_SERVERS
+cassandra_server_list=$ANALYTICSDB_CQL_SERVERS
 api_server=$CONFIG_SERVERS
 zk_list=${ZOOKEEPER_SERVERS:-`get_server_list ZOOKEEPER ":$ZOOKEEPER_PORT "`}
 

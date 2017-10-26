@@ -11,7 +11,7 @@ analytics_flow_ttl=${ANALYTICS_FLOW_TTL:-2}
 partitions=${ANALYTICS_UVE_PARTITIONS:-30}
 hostip=${COLLECTOR_LISTEN_IP:-`get_listen_ip`}
 # hostname= # Retrieved from gethostname() or `hostname -s` equivalent
-http_server_port=${COLLECTOR_INTROSPECT_LISTEN_PORT:-$COLLECTOR_LISTEN_PORT}
+http_server_port=${COLLECTOR_INTROSPECT_LISTEN_PORT:-$COLLECTOR_INTROSPECT_PORT}
 syslog_port=${COLLECTOR_SYSLOG_LISTEN_PORT:-$COLLECTOR_SYSLOG_PORT}
 sflow_port=${COLLECTOR_SFLOW_LISTEN_PORT:-$COLLECTOR_SFLOW_PORT}
 ipfix_port=${COLLECTOR_IPFIX_LISTEN_PORT:-$COLLECTOR_IPFIX_PORT}
@@ -22,7 +22,7 @@ log_file_size=${COLLECTOR_LOG_FILE_SIZ:-1048576}
 log_level=${COLLECTOR_LOG_LEVLE:-$LOG_LEVEL}
 log_local=${COLLECTOR_LOG_LOCAL:-$LOG_LOCAL}
 # sandesh_send_rate_limit=
-cassandra_server_list=$ANALYTICSDB_SERVERS
+cassandra_server_list=$ANALYTICSDB_CQL_SERVERS
 kafka_broker_list=$KAFKA_SERVERS
 zookeeper_server_list=$ZOOKEEPER_SERVERS
 
@@ -33,17 +33,17 @@ protobuf_port=${COLLECTOR_PROTOBUF_LISTEN_PORT:-$COLLECTOR_PROTOBUF_PORT}
 
 [STRUCTURED_SYSLOG_COLLECTOR]
 # TCP & UDP port to listen on for receiving structured syslog messages
-port=${COLLECTOR_STRUCTURED_SYSLOG_LISTENING_PORT:-COLLECTOR_STRUCTURED_SYSLOG_PORT}
+port=${COLLECTOR_STRUCTURED_SYSLOG_LISTEN_PORT:-$COLLECTOR_STRUCTURED_SYSLOG_PORT}
 # List of external syslog receivers to forward structured syslog messages in ip:port format separated by space
 # tcp_forward_destination=10.213.17.53:514
 kafka_broker_list=$KAFKA_SERVERS
-kafka_topic=${KAFKA_TOPIC:-'structured_syslog_topic'}
+kafka_topic=${KAFKA_TOPIC:-structured_syslog_topic}
 # number of kafka partitions
 kafka_partitions=${KAFKA_PARTITIONS:-30}
 
 [API_SERVER]
 # List of api-servers in ip:port format separated by space
-api_server_list=$ONFIG_SERVERS
+api_server_list=$CONFIG_SERVERS
 api_server_use_ssl=${CONFIG_API_USE_SSL:-False}
 
 [DATABASE]

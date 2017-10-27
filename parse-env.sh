@@ -25,6 +25,7 @@ controller_nodes=${CONTROLLER_NODES:-$host_ip}
 analytics_nodes=${ANALYTICS_NODES:-$host_ip}
 analyticsdb_nodes=${ANALYTICSDB_NODES:-$host_ip}
 api_server=${API_SERVER:-$host_ip}
+physical_interface=${PHYSICAL_INTERFACE:-`ip route show | grep "default via" | awk '{print $5}'`}
 
 default_registry_ip=${_CONTRAIL_REGISTRY_IP:-$host_ip}
 

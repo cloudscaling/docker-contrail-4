@@ -9,7 +9,7 @@ Now it's checked with CentOS containers only, however host system can be Ubuntu 
   
   https://github.com/Juniper/contrail-docker/wiki/Provision-Contrail-CNI-for-Kubernetes
   
-  Stop before deploying Contrail (kubectl apply -f contrail-host-ubuntu.yaml)
+  Stop before deploying Contrail ("Steps to provision Contrail" section)
   
 * Clone this repo:
   
@@ -17,8 +17,12 @@ Now it's checked with CentOS containers only, however host system can be Ubuntu 
 
 * Bring up your local docker repo on localhost:5000 (or change the files later for other location)
 
-* Bring up http server and make Contrail rpm packages accessible by http (http://10.0.2.15/contrail-4.0.1.0-32 in current code)
+  You can find a guide here: https://docs.docker.com/registry/deploying/
 
+* Bring up http server and make Contrail rpm packages accessible by http (http://10.0.2.15/contrail in current code)
+
+  You can use microhttpd on Ubuntu (```apt-get install microhttpd```) or httpd (```yum install  -y httpd; chkconfig httpd on; service httpd start```) on Redhat. For   microhttpd use /var/www/ to put Contrail packages, for httpd use /var/www/html/.
+  
 * Use change_contrail_version.sh to update version before build (e.g., ```change_contrail_version.sh 4.0.1.0-32 4.0.1.0-33```
 
 * Change IP 10.0.2.15 everywhere to IP of your repo URLs and to (another) IP of your controller nodes, 
@@ -32,7 +36,8 @@ Now it's checked with CentOS containers only, however host system can be Ubuntu 
 
 * Build the containers again (only base ones will be built during first iteration)
 
-* You can check your built containers in http://localhost:5000/v2/_catalog (or where your repo is)
+* You can check your built containers in http://localhost:5000/v2/_catalog (or where your repo is).
+  There should be 28 built contrail-* containers in this repo.
 
 * Do not forget to adjust your configuration in kubernetes/manifests/contrail-micro.yaml
 

@@ -42,6 +42,7 @@ metadata:
   namespace: kube-system
 data:
   CONTROLLER_NODES: {{controller_nodes}}
+  PHYSICAL_INTERFACE: {{physical_interface}}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -717,10 +718,13 @@ spec:
           name: var-log-contrail-cni
       containers:
       - name: contrail-agent
-        image: "{{registry}}/contrail-agent-ubuntu16.04:4.0.1.0"
+        image: "{{registry}}/contrail-agent-vrouter:{{version}}"
         imagePullPolicy: ""
         securityContext:
           privileged: true
+        envFrom:
+        - configMapRef:
+            name: env
         volumeMounts:
         - mountPath: /usr/src
           name: usr-src

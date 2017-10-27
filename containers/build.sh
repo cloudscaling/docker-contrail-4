@@ -43,13 +43,13 @@ build_dir () {
     build_container $dir
     return
   fi
-  for d in $(ls -d $dir/*/); do
-    if [[ $d == */base* ]]; then
+  for d in $(ls -d $dir/*/ 2>/dev/null); do
+    if [[ $d != "./" && $d == */base* ]]; then
       build_dir $d
     fi
   done
-  for d in $(ls -d $dir/*/); do
-    if [[ $d != */base* ]]; then
+  for d in $(ls -d $dir/*/ 2>/dev/null); do
+    if [[ $d != "./" && $d != */base* ]]; then
       build_dir $d
     fi
   done

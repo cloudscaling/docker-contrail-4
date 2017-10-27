@@ -2,7 +2,6 @@
 
 containers=(
 'docker.io/opencontrail/contrail-kubernetes-agent-ubuntu16.04:4.0.1.0'
-'docker.io/opencontrail/contrail-agent-ubuntu16.04:4.0.1.0'
 )
 
 DIR="${BASH_SOURCE%/*}"

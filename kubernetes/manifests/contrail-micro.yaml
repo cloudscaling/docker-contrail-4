@@ -343,6 +343,26 @@ spec:
             name: env
         securityContext:
           privileged: true
+      - name: contrail-controller-analytics-nodemgr
+        image: "{{registry}}/contrail-analytics-nodemgr:{{version}}"
+        imagePullPolicy: ""
+        envFrom:
+        - configMapRef:
+            name: nodemgr-config
+        securityContext:
+          privileged: true
+# todo: there is type Socket in new kubernetes, it is possible to use full
+# path:
+# hostPath:
+#   path: /var/run/docker.sock and
+#   type: Socket
+        volumeMounts:
+        - mountPath: /mnt
+          name: docker-unix-socket
+      volumes:
+      - name: docker-unix-socket
+        hostPath:
+          path: /var/run
 ---
 apiVersion: extensions/v1beta1
 kind: DaemonSet
@@ -399,6 +419,26 @@ spec:
             name: env
         securityContext:
           privileged: true
+      - name: contrail-controller-control-nodemgr
+        image: "{{registry}}/contrail-controller-control-nodemgr:{{version}}"
+        imagePullPolicy: ""
+        envFrom:
+        - configMapRef:
+            name: nodemgr-config
+        securityContext:
+          privileged: true
+# todo: there is type Socket in new kubernetes, it is possible to use full
+# path:
+# hostPath:
+#   path: /var/run/docker.sock and
+#   type: Socket
+        volumeMounts:
+        - mountPath: /mnt
+          name: docker-unix-socket
+      volumes:
+      - name: docker-unix-socket
+        hostPath:
+          path: /var/run
 ---
 apiVersion: extensions/v1beta1
 kind: DaemonSet

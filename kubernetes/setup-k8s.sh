@@ -22,6 +22,9 @@ install_for_ubuntu () {
 }
 
 install_for_centos () {
+  service firewalld stop
+  iptables -F
+
   cat > /etc/yum.repos.d/kubernetes.repo << EOF
 [kubernetes]
 name=Kubernetes
@@ -33,13 +36,22 @@ gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
      https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
 EOF
 
-  sudo setenforce 0 || true
+  setenforce 0 || true
+
+  if [[ -f /etc/selinux/config && -n `grep "^[ ]*SELINUX[ ]*=" /etc/selinux/config` ]]; then
+    sed -i 's/^[ ]*SELINUX[ ]*=/SELINUX=permissive/g' /etc/selinux/config
+  else
+    echo "SELINUX=permissive" >> /etc/selinux/config
+  fi
 
   yum install -y kubelet-1.7.4-0 kubeadm-1.7.4-0 kubectl-1.7.4-0 docker
   systemctl enable docker && systemctl start docker
   systemctl enable kubelet && systemctl start kubelet
 
-  echo 1 > /proc/sys/net/bridge/bridge-nf-call-iptables
+  sysctl -w net.bridge.bridge-nf-call-iptables=1
+  sysctl -w net.bridge.bridge-nf-call-ip6tables=1
+  echo "net.bridge.bridge-nf-call-iptables=1" >> /etc/sysctl.conf
+  echo "net.bridge.bridge-nf-call-ip6tables=1" >> /etc/sysctl.conf
 }
 
 case "${linux}" in
@@ -51,11 +63,14 @@ case "${linux}" in
     ;;
 esac
 
-kubeadm init --kubernetes-version v1.7.4 --skip-preflight-checks
+kubeadm init --kubernetes-version v1.7.4
 
 mkdir -p $OHOME/.kube
 cp -i /etc/kubernetes/admin.conf $OHOME/.kube/config
 chown -R $(id -u):$(id -g) $OHOME/.kube
+
+kubectl patch deploy/kube-dns --type json  -p='[{"op": "replace", "path": "/spec/template/spec/containers/0/readinessProbe", "value": {"exec": {"command": ["wget", "-O", "-", "http://127.0.0.1:8081/readiness"]}}}]' -n kube-system
+kubectl patch deploy/kube-dns --type json  -p='[{"op": "replace", "path": "/spec/template/spec/containers/0/livenessProbe", "value": {"exec": {"command": ["wget", "-O", "-", "http://127.0.0.1:10054/healthcheck/kubedns"]}}}]' -n kube-system && kubectl patch deploy/kube-dns --type json  -p='[{"op": "replace", "path": "/spec/template/spec/containers/1/livenessProbe", "value": {"exec": {"command": ["wget", "-O", "-", "http://127.0.0.1:10054/healthcheck/dnsmasq"]}}}]' -n kube-system && kubectl patch deploy/kube-dns --type json  -p='[{"op": "replace", "path": "/spec/template/spec/containers/2/livenessProbe", "value": {"exec": {"command": ["wget", "-O", "-", "http://127.0.0.1:10054/metrics"]}}}]' -n kube-system
 
 EOS
 

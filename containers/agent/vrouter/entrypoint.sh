@@ -23,7 +23,7 @@ PHYS_INT_MAC=$(cat /sys/class/net/${PHYS_INT}/address)
 
 read -r -d '' contrail_vrouter_agent_config << EOM
 [CONTROL-NODE]
-servers=${XMPP_SERVERS:-`get_server_list CONTROL ":$XMPP_SERVER_PORT "`}
+servers=${XMPP_SERVERS:-`get_server_list CONTROLLER ":$XMPP_SERVER_PORT "`}
 
 [DEFAULT]
 collectors=$COLLECTOR_SERVERS
@@ -32,7 +32,7 @@ log_level=SYS_NOTICE
 log_local=1
 
 [DNS]
-servers=${DNS_SERVERS:-`get_server_list DNS ":$DNS_SERVER_PORT "`}
+servers=${DNS_SERVERS:-`get_server_list CONTROLLER ":$DNS_SERVER_PORT "`}
 
 [METADATA]
 metadata_proxy_secret=contrail
@@ -87,8 +87,13 @@ function insert_vrouter() {
 }
 
 # Load kernel module
-echo "Modprobing vrouter"
-modprobe vrouter
+kver=`uname -r | awk -F"-" '{print $1}'`
+modfile=`ls -1rt /opt/contrail/vrouter-kernel-modules/$kver-*/vrouter.ko | tail -1`
+echo "Modprobing vrouter "$modfile
+insmod $modfile
+if [[ -z `lsmod | grep vrouter` ]]; then
+  echo "Failed to insert vrouter kernel module"
+fi
 
 if [[ $CUR_INT != "vhost0" ]]; then
         echo "Inserting vrouter"

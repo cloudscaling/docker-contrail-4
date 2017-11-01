@@ -15,9 +15,10 @@ function install_docker () {
 
 hash docker 2>/dev/null || install_docker
 
+linux=$(awk -F"=" '/^ID=/{print $2}' /etc/os-release | tr -d '"')
 docker_ver=$(docker -v | awk -F' ' '{print $3}')
 
-if [[ $docker_ver > "17.06" ]]; then
+if [[ "$linux" == "centos" || $docker_ver > "17.06" ]]; then
   exit
 fi
 

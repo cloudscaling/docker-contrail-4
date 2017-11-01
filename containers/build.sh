@@ -13,6 +13,7 @@ if [ -n "$opts" ]; then
   echo 'Options: '$opts
 fi
 
+linux=$(awk -F"=" '/^ID=/{print $2}' /etc/os-release | tr -d '"')
 was_errors=0
 
 build_container () {
@@ -20,12 +21,19 @@ build_container () {
   local container_name=`echo ${dir#"./"} | tr "/" "-"`
   local container_name='contrail-'${container_name}
   echo 'Building '$container_name
+  if [ $linux == "centos" ]; then
+    cat $dir/Dockerfile \
+      | sed -e 's/\(^ARG CONTRAIL_REGISTRY=.*\)/#\1/' -e 's/\(^ARG CONTRAIL_VERSION=.*\)/#\1/' \
+      -e 's|^FROM ${CONTRAIL_REGISTRY}/\([^:]*\):${CONTRAIL_VERSION}|FROM '$registry'/\1:'$version'|' \
+      > $dir/Dockerfile.nofromargs
+    int_opts="-f $dir/Dockerfile.nofromargs"
+  fi
   local logfile='build-'$container_name'.log'
   docker build -t ${registry}'/'${container_name}:${version} \
     --build-arg CONTRAIL_VERSION=${version} \
     --build-arg CONTRAIL_REGISTRY=${registry} \
     --build-arg REPOSITORY=${repository} \
-    ${opts} $dir |& tee $logfile
+    ${int_opts} ${opts} $dir |& tee $logfile
   if [ ${PIPESTATUS[0]} -eq 0 ]; then
     docker push ${registry}'/'${container_name}:${version} |& tee -a $logfile
     if [ ${PIPESTATUS[0]} -eq 0 ]; then

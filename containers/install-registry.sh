@@ -7,7 +7,7 @@ else
 fi
 
 sudo docker run -d --restart=always --name registry \
-  -v /opt:/var/lib/registry \
+  -v /opt:/var/lib/registry:Z \
   -e REGISTRY_HTTP_ADDR=0.0.0.0:$port -p $port:$port \
   registry:2
 

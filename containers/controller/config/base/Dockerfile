@@ -7,7 +7,7 @@ COPY contrail.repo /etc/yum.repos.d/contrail.repo
 
 RUN yum update -y; \
     yum install -y yum-plugin-priorities iproute telnet \
-                   http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-10.noarch.rpm \
+                   http://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-7-11.noarch.rpm \
                    https://repos.fedorapeople.org/repos/openstack/openstack-newton/rdo-release-newton-5.noarch.rpm ; \
     yum install -y contrail-lib contrail-nodemgr contrail-setup contrail-utils python-contrail contrail-config contrail-config-openstack;
 

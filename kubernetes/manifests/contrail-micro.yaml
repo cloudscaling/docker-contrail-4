@@ -343,7 +343,7 @@ spec:
             name: env
         securityContext:
           privileged: true
-      - name: contrail-controller-analytics-nodemgr
+      - name: contrail-analytics-nodemgr
         image: "{{registry}}/contrail-analytics-nodemgr:{{version}}"
         imagePullPolicy: ""
         envFrom:
@@ -783,7 +783,26 @@ spec:
           name: var-log-contrail-cni
         - mountPath: /tmp/serviceaccount
           name: pod-secret
+      - name: contrail-analytics-nodemgr
+        image: "{{registry}}/contrail-agent-nodemgr:{{version}}"
+        imagePullPolicy: ""
+        envFrom:
+        - configMapRef:
+            name: nodemgr-config
+        securityContext:
+          privileged: true
+# todo: there is type Socket in new kubernetes, it is possible to use full
+# path:
+# hostPath:
+#   path: /var/run/docker.sock and
+#   type: Socket
+        volumeMounts:
+        - mountPath: /mnt
+          name: docker-unix-socket
       volumes:
+      - name: docker-unix-socket
+        hostPath:
+          path: /var/run
       - name: tmp-contrail-config
         configMap:
           name: contrail-config

@@ -783,7 +783,7 @@ spec:
           name: var-log-contrail-cni
         - mountPath: /tmp/serviceaccount
           name: pod-secret
-      - name: contrail-analytics-nodemgr
+      - name: contrail-agent-nodemgr
         image: "{{registry}}/contrail-agent-nodemgr:{{version}}"
         imagePullPolicy: ""
         envFrom:

@@ -9,6 +9,8 @@ function install_docker () {
       ;;
     "centos" | "rhel" )
       sudo yum install -y docker
+      sudo systemctl enable docker
+      sudo systemctl start docker
       ;;
   esac
 }

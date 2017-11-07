@@ -19,6 +19,10 @@ export OUSER=$(id -un)
 
 sudo -u root /bin/bash << EOS
 
+echo "Allow user "$OUSER" to access docker directly (requires re-login)"
+groupadd docker
+usermod -aG docker $OUSER
+
 if [ $port -eq 443 ]; then
   :
 else
@@ -28,11 +32,8 @@ else
   "insecure-registries": ["$remote_address"]
 }
 EOJ
-  service docker restart
 fi
 
-echo "Allow user "$OUSER" to access docker directly (requires re-login)"
-groupadd docker
-usermod -aG docker $OUSER
+service docker restart
 
 EOS

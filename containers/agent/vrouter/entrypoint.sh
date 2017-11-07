@@ -93,6 +93,7 @@ echo "Modprobing vrouter "$modfile
 insmod $modfile
 if [[ -z `lsmod | grep vrouter` ]]; then
   echo "Failed to insert vrouter kernel module"
+  exit 1
 fi
 
 if [[ $CUR_INT != "vhost0" ]]; then

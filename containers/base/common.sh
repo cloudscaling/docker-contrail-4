@@ -47,7 +47,7 @@ KAFKA_PORT=${KAFKA_PORT:-9092}
 
 CONFIG_SERVERS=${CONFIG_SERVERS:-`get_server_list CONFIG ":$CONFIG_API_PORT "`}
 CONFIGDB_SERVERS=${CONFIGDB_SERVERS:-`get_server_list CONFIGDB ":$CONFIGDB_PORT "`}
-CONFIGDB_CQL_SERVERS=${CONFIGDB_CQL_SERVERS:-`get_server_list CONFIGDB ":$CONFIGDB_CQL_PORT"`}
+CONFIGDB_CQL_SERVERS=${CONFIGDB_CQL_SERVERS:-`get_server_list CONFIGDB ":$CONFIGDB_CQL_PORT "`}
 ZOOKEEPER_SERVERS=${ZOOKEEPER_SERVERS:-`get_server_list ZOOKEEPER ":$ZOOKEEPER_PORT,"`}
 RABBITMQ_SERVERS=${RABBITMQ_SERVERS:-`get_server_list RABBITMQ ":$RABBITMQ_PORT,"`}
 ANALYTICS_SERVERS=${ANALYTICS_SERVERS:-`get_server_list ANALYTICS ":$ANALYTICS_API_PORT "`}
@@ -91,15 +91,15 @@ function set_third_party_auth_config(){
   if [ $CONFIG_API_auth="keystone" ]; then
     cat > /etc/contrail/contrail-keystone-auth.conf << EOM
 [KEYSTONE]
-admin_password = PQWmBFprabzGZz7rAZyxXQXYb
+admin_password = password
 admin_tenant_name = admin
-admin_token = eDmvqUxPGrt7qp2YX67MtfF7T
 admin_user = admin
-auth_host = 192.168.24.12
+auth_host = ${CONFIG_AUTHN_SERVER:-""}
 auth_port = 35357
 auth_protocol = http
 insecure = false
-memcached_servers = 127.0.0.1:12111
+auth_url = http://${CONFIG_AUTHN_SERVER:-""}:35357/v2.0
+#memcache_servers=127.0.0.1:11211
 EOM
   fi
 }

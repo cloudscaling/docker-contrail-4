@@ -58,7 +58,7 @@ rabbitmq_use_ssl=$RABBITMQ_USE_SSL
 # rabbitmq_ssl_certfile=
 # rabbitmq_ssl_ca_certs=
 #
-config_db_server_list=$CONFIGDB_SERVERS
+config_db_server_list=$CONFIGDB_CQL_SERVERS
 # config_db_username=
 # config_db_password=
 

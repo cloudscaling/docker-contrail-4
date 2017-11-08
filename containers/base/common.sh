@@ -71,9 +71,15 @@ LOG_LOCAL=${LOG_LOCAL:-1}
 
 BGP_ASN=64512
 
+CONFIG_API_AUTH=${CONFIG_API_AUTH:-noauth}
 ADMIN_TENANT=${ADMIN_TENANT:-admin}
 ADMIN_USER=${ADMIN_USER:-admin}
 ADMIN_PASSWORD=${ADMIN_PASSWORD:-contrail123}
+AUTH_PROJECT_DOMAIN_NAME=${AUTH_PROJECT_DOMAIN_NAME:-Default}
+AUTH_USER_DOMAIN_NAME=${AUTH_USER_DOMAIN_NAME:-Default}
+AUTH_URL_VERSION=${AUTH_URL_VERSION:-'v2.0'}
+AUTH_URL_TOKENS=${AUTH_URL_TOKENS:-'/v2.0/tokens'}
+
 
 RNDC_KEY="xvysmOR8lnUQRBcunkC6vg=="
 
@@ -91,16 +97,23 @@ function set_third_party_auth_config(){
   if [[ $CONFIG_API_AUTH == "keystone" ]]; then
     cat > /etc/contrail/contrail-keystone-auth.conf << EOM
 [KEYSTONE]
-admin_password = password
-admin_tenant_name = admin
-admin_user = admin
+#memcache_servers=127.0.0.1:11211
+admin_password = $ADMIN_PASSWORD
+admin_tenant_name = $ADMIN_TENANT
+admin_user = $ADMIN_USER
 auth_host = $CONFIG_AUTHN_SERVER
 auth_port = 35357
 auth_protocol = http
 insecure = false
-auth_url = http://$CONFIG_AUTHN_SERVER:35357/v2.0
-#memcache_servers=127.0.0.1:11211
+auth_url = http://$CONFIG_AUTHN_SERVER:35357/$AUTH_URL_VERSION
+auth_type = password
 EOM
+    if [[ "$AUTH_URL_VERSION" == 'v3' ]] ; then
+      cat >> /etc/contrail/contrail-keystone-auth.conf << EOM
+user_domain_name = $AUTH_USER_DOMAIN_NAME
+project_domain_name = $AUTH_PROJECT_DOMAIN_NAME
+EOM
+    fi
   fi
 }
 
@@ -125,7 +138,8 @@ AUTHN_TYPE = keystone
 AUTHN_PROTOCOL = http
 AUTHN_SERVER = $CONFIG_AUTHN_SERVER
 AUTHN_PORT = 35357
-AUTHN_URL = /v2.0/tokens
+AUTHN_URL = $AUTH_URL_TOKENS
+AUTHN_DOMAIN = $AUTH_PROJECT_DOMAIN_NAME
 ;AUTHN_TOKEN_URL = http://127.0.0.1:35357/v2.0/tokens
 EOM
   fi

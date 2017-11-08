@@ -686,6 +686,9 @@ spec:
         imagePullPolicy: ""
         securityContext:
           privileged: true
+        env:
+        - name: K8S_TOKEN_FILE
+          value: "/tmp/serviceaccount/token"
         volumeMounts:
         - mountPath: /tmp/contrailctl
           name: tmp-contrail-config

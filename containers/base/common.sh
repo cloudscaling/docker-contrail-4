@@ -88,17 +88,17 @@ EOM
 
 
 function set_third_party_auth_config(){
-  if [ $CONFIG_API_auth="keystone" ]; then
+  if [[ $CONFIG_API_AUTH == "keystone" ]]; then
     cat > /etc/contrail/contrail-keystone-auth.conf << EOM
 [KEYSTONE]
 admin_password = password
 admin_tenant_name = admin
 admin_user = admin
-auth_host = ${CONFIG_AUTHN_SERVER:-""}
+auth_host = $CONFIG_AUTHN_SERVER
 auth_port = 35357
 auth_protocol = http
 insecure = false
-auth_url = http://${CONFIG_AUTHN_SERVER:-""}:35357/v2.0
+auth_url = http://$CONFIG_AUTHN_SERVER:35357/v2.0
 #memcache_servers=127.0.0.1:11211
 EOM
   fi
@@ -114,15 +114,19 @@ WEB_SERVER = 127.0.0.1
 WEB_PORT = ${CONFIG_api_server_port:-8082}
 BASE_URL = /
 ;BASE_URL = /tenants/infra ; common-prefix for all URLs
+EOM
+
+  if [[ $CONFIG_API_AUTH == "keystone" ]]; then
+    cat >> /etc/contrail/vnc_api_lib.ini << EOM
 
 ; Authentication settings (optional)
 [auth]
-;AUTHN_TYPE = keystone
-;AUTHN_PROTOCOL = http
-;AUTHN_SERVER = 127.0.0.1
-AUTHN_SERVER = ${CONFIG_AUTHN_SERVER:-""}
-;AUTHN_PORT = 35357
-;AUTHN_URL = /v2.0/tokens
+AUTHN_TYPE = keystone
+AUTHN_PROTOCOL = http
+AUTHN_SERVER = $CONFIG_AUTHN_SERVER
+AUTHN_PORT = 35357
+AUTHN_URL = /v2.0/tokens
 ;AUTHN_TOKEN_URL = http://127.0.0.1:35357/v2.0/tokens
 EOM
+  fi
 }

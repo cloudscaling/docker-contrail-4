@@ -31,4 +31,7 @@ aaa_mode = ${ANALYTICS_API_AAA_MODE:-no-auth}
 $sandesh_client_config
 EOM
 
+set_third_party_auth_config
+set_vnc_api_lib_ini
+
 exec "$@"

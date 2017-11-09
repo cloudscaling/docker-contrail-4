@@ -142,5 +142,10 @@ AUTHN_URL = $AUTH_URL_TOKENS
 AUTHN_DOMAIN = $AUTH_PROJECT_DOMAIN_NAME
 ;AUTHN_TOKEN_URL = http://127.0.0.1:35357/v2.0/tokens
 EOM
+  else
+    cat >> /etc/contrail/vnc_api_lib.ini << EOM
+[auth]
+AUTHN_TYPE = noauth
+EOM
   fi
 }

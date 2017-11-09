@@ -19,7 +19,7 @@ case "${linux}" in
     rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
     yum install -y lighttpd
     sed -i 's/\(dir-listing.activate\)[ \t]*=.*/\1 = "enable"/' /etc/lighttpd/conf.d/dirlisting.conf
-    sed -i 's/server.use-ipv6.*=.*enable/server.use-ipv6 = "disable"/g' /etc/lighttpd/lighttpd.conf
+    sed -i 's/server.use-ipv6.*=.*enable.*/server.use-ipv6 = "disable"/g' /etc/lighttpd/lighttpd.conf
     ;;
 esac
 sed -i 's#\(server.document-root\)[ \t]*=.*#\1 = "'$package_root_dir'"#' /etc/lighttpd/lighttpd.conf

@@ -48,7 +48,7 @@ Use default VPC (make sure the ports are open - see below) or configure a new on
 ```git clone https://github.com/Juniper/contrail-container-builder```
 * Run build:
 ```cd docker-contrail-4/containers
-./setup-for-build.sh```
+./setup-for-build.sh
 sudo -E ./build.sh```
 * After build without error you can find several containers: 
 ```sudo docker images | grep "$CONTRAIL_VERSION"```

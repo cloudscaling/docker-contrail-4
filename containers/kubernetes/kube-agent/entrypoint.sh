@@ -2,8 +2,15 @@
 
 source /common.sh
 
+# TODO: Rework determining vrouter ip. Should commonize it with agent's container
+PHYS_INT=${PHYSICAL_INTERFACE:-`get_default_nic`}
+CUR_INT=$PHYS_INT
+if [[ `ip address show vhost0 |grep "inet "` ]]; then
+  CUR_INT=vhost0
+fi
 VROUTER_CIDR=`ip address show ${CUR_INT} |grep "inet "|awk '{print $2}'`
-VROUTER_IP=${VROUTER_IP:-`${VROUTER_CIDR%/*}`}
+cur_ip=${VROUTER_CIDR%/*}
+VROUTER_IP=${VROUTER_IP:-$cur_ip}
 VROUTER_PORT=${VROUTER_PORT:-9091}
 
 trap cleanup SIGHUP SIGINT SIGTERM
@@ -38,6 +45,7 @@ read -r -d '' contrail_cni_conf << EOM
     "name": "contrail-k8s-cni",
     "type": "contrail-k8s-cni"
 }
+EOM
 
 echo "$contrail_cni_conf" > /host/etc_cni/net.d/10-contrail.conf
 exec "$@"

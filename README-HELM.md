@@ -46,7 +46,7 @@ Use default VPC (make sure the ports are open - see below) or configure a new on
 ```sudo yum install -y git wget ntp iproute```
 * Clone build repo: 
 ```git clone https://github.com/Juniper/contrail-container-builder```
-* Run build:
+* Run build: 
 ```cd docker-contrail-4/containers
 ./setup-for-build.sh
 sudo -E ./build.sh```

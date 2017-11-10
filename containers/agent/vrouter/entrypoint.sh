@@ -2,6 +2,7 @@
 
 source /common.sh
 
+HYPERVISOR_TYPE="${HYPERVISOR_TYPE:-kvm}"
 PHYS_INT=${PHYSICAL_INTERFACE:-`get_default_nic`}
 CUR_INT=$PHYS_INT
 if [[ `ip address show vhost0 |grep "inet "` ]]; then
@@ -46,6 +47,9 @@ gateway=$VROUTER_GATEWAY
 [SERVICE-INSTANCE]
 netns_command=/usr/bin/opencontrail-vrouter-netns
 docker_command=/usr/bin/opencontrail-vrouter-docker
+
+[HYPERVISOR]
+type = $HYPERVISOR_TYPE
 EOM
 
 # VRouter specific code starts here

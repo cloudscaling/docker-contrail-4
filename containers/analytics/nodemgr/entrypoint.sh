@@ -10,7 +10,7 @@ cat > /etc/contrail/$NODEMGR_NAME.conf << EOM
 [DEFAULTS]
 log_local=${!log_local:-$LOG_LOCAL}
 log_level=${!log_level:-$LOG_LEVEL}
-#hostip=127.0.0.1
+hostip=$DEFAULT_LOCAL_IP
 #contrail_databases=config analytics
 #minimum_diskGB=4
 #log_category =
@@ -22,5 +22,6 @@ server_list=${COLLECTOR_SERVERS}
 $sandesh_client_config
 EOM
 
-exec "$@"
+set_vnc_api_lib_ini
 
+exec "$@"

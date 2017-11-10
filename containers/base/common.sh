@@ -93,6 +93,9 @@ sandesh_ca_cert=${SANDESH_CA_CERT:-/etc/contrail/ssl/certs/ca-cert.pem}
 EOM
 
 
+DEFAULT_IFACE=`ip -4 route list 0/0 | awk '{ print $5; exit }'`
+DEFAULT_LOCAL_IP=`ip addr | grep $iface | grep 'inet ' | awk '{print $2}' | cut -d '/' -f 1`
+
 function set_third_party_auth_config(){
   if [[ $CONFIG_API_AUTH == "keystone" ]]; then
     cat > /etc/contrail/contrail-keystone-auth.conf << EOM
@@ -118,13 +121,14 @@ EOM
 }
 
 function set_vnc_api_lib_ini(){
+# TODO: set WEB_SERVER to VIP
   cat > /etc/contrail/vnc_api_lib.ini << EOM
 [global]
 ;WEB_SERVER = 127.0.0.1
 ;WEB_PORT = 9696  ; connection through quantum plugin
 
-WEB_SERVER = 127.0.0.1
-WEB_PORT = ${CONFIG_api_server_port:-8082}
+WEB_SERVER = $CONFIG_NODES
+WEB_PORT = ${CONFIG_API_PORT:-8082}
 BASE_URL = /
 ;BASE_URL = /tenants/infra ; common-prefix for all URLs
 EOM

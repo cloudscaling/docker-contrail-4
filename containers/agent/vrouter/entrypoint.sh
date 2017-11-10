@@ -32,6 +32,14 @@ log_file=/var/log/contrail/contrail-vrouter-agent.log
 log_level=SYS_NOTICE
 log_local=1
 
+xmpp_dns_auth_enable = False
+xmpp_auth_enable = False
+physical_interface_mac = $PHYS_INT_MAC
+
+[SANDESH]
+introspect_ssl_enable = False
+sandesh_ssl_enable = False
+
 [DNS]
 servers=${DNS_SERVERS:-`get_server_list CONTROLLER ":$DNS_SERVER_PORT "`}
 

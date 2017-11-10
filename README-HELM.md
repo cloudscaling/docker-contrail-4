@@ -86,6 +86,7 @@ enabled=0
 priority=2
 gpgcheck=1
 gpgkey=https://download.ceph.com/keys/release.asc```
+
 * Install utilities: 
 ```sudo yum install -y git wget ntp```
 * To avoid problem with loading vrouter.ko in the middle of deployment process (cannot allocate memory) we recommend to insert kernel module before running Helm:

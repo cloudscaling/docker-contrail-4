@@ -26,7 +26,7 @@ read -r -d '' contrail_cni_conf << EOM
 {
     "cniVersion": "0.2.0",
     "contrail" : {
-        "vrouter-ip"    : $VROUTER_IP,
+        "vrouter-ip"    : "$VROUTER_IP",
         "vrouter-port"  : $VROUTER_PORT,
         "config-dir"    : "/var/lib/contrail/ports/vm",
         "poll-timeout"  : 5,

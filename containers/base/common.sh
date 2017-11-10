@@ -118,13 +118,14 @@ EOM
 }
 
 function set_vnc_api_lib_ini(){
+# TODO: set WEB_SERVER to VIP
   cat > /etc/contrail/vnc_api_lib.ini << EOM
 [global]
 ;WEB_SERVER = 127.0.0.1
 ;WEB_PORT = 9696  ; connection through quantum plugin
 
-WEB_SERVER = 127.0.0.1
-WEB_PORT = ${CONFIG_api_server_port:-8082}
+WEB_SERVER = $CONFIG_NODES
+WEB_PORT = ${CONFIG_API_PORT:-8082}
 BASE_URL = /
 ;BASE_URL = /tenants/infra ; common-prefix for all URLs
 EOM

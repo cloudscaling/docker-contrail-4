@@ -744,7 +744,7 @@ spec:
       hostNetwork: true
       initContainers:
       - name: contrail-kubernetes-agent
-        image: "{{registry}}/contrail-kubernetes-agent-ubuntu16.04:4.0.1.0"
+        image: "{{registry}}/contrail-kubernetes-kube-agent:{{version}}"
         imagePullPolicy: ""
         securityContext:
           privileged: true
